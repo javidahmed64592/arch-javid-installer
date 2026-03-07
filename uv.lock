@@ -3,6 +3,26 @@ revision = 3
 requires-python = ">=3.13"
 
 [[package]]
+name = "arch-javid-installer"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "template-python" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "template-python", extra = ["dev"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "template-python", git = "https://github.com/javidahmed64592/template-python.git" },
+    { name = "template-python", extras = ["dev"], marker = "extra == 'dev'", git = "https://github.com/javidahmed64592/template-python.git" },
+]
+provides-extras = ["dev"]
+
+[[package]]
 name = "bandit"
 version = "1.9.4"
 source = { registry = "https://pypi.org/simple" }
@@ -727,7 +747,7 @@ wheels = [
 [[package]]
 name = "template-python"
 version = "0.1.0"
-source = { editable = "." }
+source = { git = "https://github.com/javidahmed64592/template-python.git#d72bc7dc66960b588039d1003dbfdb57e12e1e82" }
 dependencies = [
     { name = "pyhere" },
 ]
@@ -743,20 +763,6 @@ dev = [
     { name = "ruff" },
     { name = "validate-pyproject" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "bandit", marker = "extra == 'dev'", specifier = ">=1.9.4" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.19.1" },
-    { name = "pip-audit", marker = "extra == 'dev'", specifier = ">=2.10.0" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.5.1" },
-    { name = "pyhere", specifier = ">=1.0.3" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0.2" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.15.5" },
-    { name = "validate-pyproject", marker = "extra == 'dev'", specifier = ">=0.25.0" },
-]
-provides-extras = ["dev"]
 
 [[package]]
 name = "tomli"

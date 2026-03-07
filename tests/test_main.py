@@ -1,6 +1,6 @@
-"""Unit tests for the template_python.main module."""
+"""Unit tests for the arch_javid_installer.main module."""
 
-from template_python.main import example_function
+from arch_javid_installer.main import example_function
 
 
 def test_example_function() -> None:

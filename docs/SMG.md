@@ -1,7 +1,7 @@
 <!-- omit from toc -->
 # Software Maintenance Guide
 
-This document outlines how to configure and setup a development environment to work on Python applications using this template.
+This document outlines how to configure and setup a development environment to work on this installer.
 
 <!-- omit from toc -->
 ## Table of Contents
@@ -19,8 +19,8 @@ This document outlines how to configure and setup a development environment to w
 ### Directory Structure
 
 ```
-template_python/
-└── main.py # Replace with your application
+arch_javid_installer/
+└── main.py
 ```
 
 ### Installing Dependencies
@@ -52,5 +52,5 @@ uv run pre-commit install
 - **Format code:** `uv run ruff format .`
 - **Type check:** `uv run mypy .`
 - **Run tests:** `uv run pytest`
-- **Security scan:** `uv run bandit -r template_python/`
+- **Security scan:** `uv run bandit -r arch_javid_installer/`
 - **Audit dependencies:** `uv run pip-audit`
