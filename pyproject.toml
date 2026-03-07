@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "template-python"
+name = "arch-javid-installer"
 version = "0.1.0"
-description = "An example pyproject.toml."
+description = "A Python installer for Arch Javid."
 readme = "README.md"
 requires-python = ">=3.13"
 license = { file = "LICENSE" }
@@ -18,36 +18,26 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
-    "pyhere>=1.0.3",
+    "template-python @ git+https://github.com/javidahmed64592/template-python.git",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "bandit>=1.9.4",
-    "mypy>=1.19.1",
-    "pip-audit>=2.10.0",
-    "pre-commit>=4.5.1",
-    "pytest>=9.0.2",
-    "pytest-cov>=7.0.0",
-    "ruff>=0.15.5",
-    "validate-pyproject>=0.25.0",
+    "template-python[dev] @ git+https://github.com/javidahmed64592/template-python.git",
 ]
 
 [project.urls]
 repository = "https://github.com/javidahmed64592/template-python"
 
 [project.scripts]
-ci-pyproject-version = "template_python.workflows:print_version_pyproject"
-ci-pyproject-name = "template_python.workflows:print_name_pyproject"
-ci-uv-lock-version = "template_python.workflows:print_version_uv_lock"
-example-entrypoint = "template_python.main:example_function"
+arch-javid-installer = "arch_javid_installer.main:run"
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [tool.hatch.build]
 include = [
-  "template_python/**",
+  "arch_javid_installer/**",
 ]
 
 [tool.pytest.ini_options]
@@ -60,7 +50,7 @@ addopts = [
 
 [tool.coverage.run]
 branch = true
-source = ["template_python", "tests"]
+source = ["arch_javid_installer", "tests"]
 
 [tool.coverage.report]
 fail_under = 80
@@ -168,7 +158,5 @@ warn_unreachable = true
 pretty = true
 
 [[tool.mypy.overrides]]
-module = [
-    "pyhere.*"
-]
+module = []
 ignore_missing_imports = true
