@@ -1,0 +1,15 @@
+name: Install Dev Python Dependencies
+description: Installs dev Python dependencies from pyproject.toml using uv.
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/setup/setup-uv-python
+      if: github.event.repository.name == 'template-python'
+    - uses: javidahmed64592/template-python/.github/actions/setup/setup-uv-python@main
+      if: github.event.repository.name != 'template-python'
+
+    - name: Install dependencies
+      run: |
+        uv sync --extra dev
+      shell: bash

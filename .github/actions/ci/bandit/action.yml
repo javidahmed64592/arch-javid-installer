@@ -1,0 +1,20 @@
+name: Run CI job - Bandit
+description: Run Bandit security checks on the codebase.
+
+runs:
+  using: composite
+  steps:
+      - uses: ./.github/actions/setup/install-python-dev
+        if: github.event.repository.name == 'template-python'
+      - uses: javidahmed64592/template-python/.github/actions/setup/install-python-dev@main
+        if: github.event.repository.name != 'template-python'
+
+      - name: Security check
+        run: |
+          uv run bandit -r ${{ env.PACKAGE_NAME }} -f json -o bandit-report.json || true
+        shell: bash
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: bandit-report
+          path: bandit-report.json
