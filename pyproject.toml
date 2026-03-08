@@ -18,6 +18,8 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
+    "pydantic>=2.12.5",
+    "pyside6>=6.10.2",
     "template-python @ git+https://github.com/javidahmed64592/template-python.git",
 ]
 
