@@ -32,7 +32,7 @@ dev = [
 repository = "https://github.com/javidahmed64592/template-python"
 
 [project.scripts]
-arch-javid-installer = "arch_javid_installer.main:run"
+arch-javid-installer = "arch_javid_installer.main:main"
 
 [tool.hatch.metadata]
 allow-direct-references = true
