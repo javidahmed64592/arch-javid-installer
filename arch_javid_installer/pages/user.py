@@ -14,6 +14,10 @@ class UserPage(QWizardPage):
 
         layout = QVBoxLayout()
 
+        self.computer_name = QLineEdit()
+        layout.addWidget(QLabel("Computer Name"))
+        layout.addWidget(self.computer_name)
+
         self.username = QLineEdit()
         layout.addWidget(QLabel("Username"))
         layout.addWidget(self.username)
@@ -28,8 +32,9 @@ class UserPage(QWizardPage):
         layout.addWidget(QLabel("Confirm Password"))
         layout.addWidget(self.confirm_password)
 
-        self.root_same_password = QRadioButton("Root password same as user password")
+        self.root_same_password = QRadioButton("Use the same password for the root user.")
         layout.addWidget(self.root_same_password)
+        self.root_same_password.toggled.connect(self.toggle_root_password_fields)
 
         self.root_password = QLineEdit()
         self.root_password.setEchoMode(QLineEdit.Password)
@@ -42,3 +47,8 @@ class UserPage(QWizardPage):
         layout.addWidget(self.confirm_root_password)
 
         self.setLayout(layout)
+
+    def toggle_root_password_fields(self, checked: bool) -> None:  # noqa: FBT001
+        """Toggle the root password fields based on the state of the radio button."""
+        self.root_password.setEnabled(not checked)
+        self.confirm_root_password.setEnabled(not checked)
