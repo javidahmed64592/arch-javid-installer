@@ -2,7 +2,10 @@
 
 import subprocess
 
+from arch_javid_installer.models import RegionOptions
+
 SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
+ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
 
 
 # General methods
@@ -25,4 +28,11 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
 def get_supported_locales() -> list[str]:
     """Get a list of supported locales from the system."""
     result = run_command(read_file_command(SUPPORTED_LOCALES_FILEPATH))
+    return result.stdout.splitlines()
+
+
+def get_zones_for_region(region: RegionOptions) -> list[str]:
+    """Get a list of timezones for a given region."""
+    directory = f"{ZONEINFO_DIRECTORY}/{region}"
+    result = run_command(list_directory_command(directory))
     return result.stdout.splitlines()

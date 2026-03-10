@@ -2,7 +2,8 @@
 
 from PySide6.QtWidgets import QWizard
 
-from arch_javid_installer.helpers import supported_locales_to_language_options
+from arch_javid_installer.helpers import get_regions_dict, supported_locales_to_language_options
+from arch_javid_installer.models import RegionOptions
 from arch_javid_installer.pages import (
     DiskPage,
     FinishPage,
@@ -27,9 +28,11 @@ class InstallerWizard(QWizard):
         _supported_locales = get_supported_locales()
         _language_options = supported_locales_to_language_options(_supported_locales)
 
+        _regions_dict = get_regions_dict()
+
         self.pages = {
             "welcome": WelcomePage(language_options=_language_options),
-            "location": LocationPage(),
+            "location": LocationPage(regions_dict=_regions_dict, default_region=RegionOptions.EUROPE),
             "keyboard": KeyboardPage(),
             "disk": DiskPage(),
             "user": UserPage(),

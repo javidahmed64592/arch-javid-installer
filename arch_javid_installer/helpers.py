@@ -3,6 +3,9 @@
 from babel import Locale
 from babel.core import UnknownLocaleError
 
+from arch_javid_installer.models import RegionOptions
+from arch_javid_installer.shell import get_zones_for_region
+
 
 # Pre-installation methods
 def language_code_to_name(code: str) -> str:
@@ -31,15 +34,7 @@ def language_code_to_name(code: str) -> str:
 
 
 def supported_locales_to_language_options(locales: list[str]) -> list[str]:
-    """Convert a list of supported locales to a list of language options.
-
-    Args:
-        locales: List of locale strings from the supported locales file.
-                Each line contains locale code and encoding (e.g., 'en_US.UTF-8 UTF-8').
-
-    Returns:
-        Sorted list of unique human-readable language names.
-    """
+    """Convert a list of supported locales to a list of language options."""
     language_names = set()
 
     for locale_line in locales:
@@ -56,3 +51,8 @@ def supported_locales_to_language_options(locales: list[str]) -> list[str]:
 
     # Return sorted list
     return sorted(language_names)
+
+
+def get_regions_dict() -> dict[str, list[str]]:
+    """Get a dictionary of regions and their corresponding timezones."""
+    return {region: get_zones_for_region(region) for region in RegionOptions}
