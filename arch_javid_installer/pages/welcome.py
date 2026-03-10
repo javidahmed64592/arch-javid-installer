@@ -1,12 +1,12 @@
 """Welcome page."""
 
-from PySide6.QtWidgets import QLabel, QVBoxLayout, QWizardPage
+from PySide6.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWizardPage
 
 
 class WelcomePage(QWizardPage):
     """Welcome page of the installer."""
 
-    def __init__(self) -> None:
+    def __init__(self, language_options: list[str]) -> None:
         """Initialize the welcome page."""
         super().__init__()
 
@@ -14,7 +14,14 @@ class WelcomePage(QWizardPage):
 
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Welcome to the Arch-Javid Installer!"))
-        layout.addWidget(QLabel("This installer will guide you through the installation process."))
-        layout.addWidget(QLabel("Click Next to continue."))
+
+        # Language selection
+        layout.addWidget(QLabel("Select your language:"))
+        self.language_list = QComboBox()
+
+        for language in language_options:
+            self.language_list.addItem(language)
+
+        layout.addWidget(self.language_list)
 
         self.setLayout(layout)
