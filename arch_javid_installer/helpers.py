@@ -10,7 +10,7 @@ from arch_javid_installer.models import (
     KeyboardVariantName,
     RegionOptions,
 )
-from arch_javid_installer.shell import get_supported_locales, get_zones_for_region
+from arch_javid_installer.shell import get_available_keyboard_layouts, get_supported_locales, get_zones_for_region
 
 
 # Pre-installation methods
@@ -93,14 +93,12 @@ def _parse_keyboard_variant_line(parts: list[str]) -> KeyboardVariantName | None
     return KeyboardVariantName(variant=variant_code, layout=layout_code.strip(), name=variant_name.strip())
 
 
-def get_keyboard_options(
+def parse_keyboard_options(
     lines: list[str],
-) -> tuple[list[KeyboardModelName], list[KeyboardLayoutName], list[KeyboardVariantName]]:
-    """Get a list of keyboard models, layouts, and variants."""
+) -> tuple[list[KeyboardModelName], dict[KeyboardLayoutName, list[KeyboardVariantName]]]:
+    """Get a list of keyboard models and a dict mapping layouts to their variants."""
     models: list[KeyboardModelName] = []
-    layouts: list[KeyboardLayoutName] = []
-    variants: list[KeyboardVariantName] = []
-
+    layouts_dict: dict[KeyboardLayoutName, list[KeyboardVariantName]] = {}
     current_section: KeyboardLayoutSectionMarkers | None = None
 
     for line in lines:
@@ -124,16 +122,16 @@ def get_keyboard_options(
                     models.append(model)
             case KeyboardLayoutSectionMarkers.LAYOUT:
                 if layout := _parse_keyboard_layout_line(line):
-                    layouts.append(layout)
+                    layouts_dict[layout] = []
             case KeyboardLayoutSectionMarkers.VARIANT:
                 if variant := _parse_keyboard_variant_line(line):
-                    variants.append(variant)
+                    layout = next((layout for layout in layouts_dict.keys() if layout.layout == variant.layout), None)
+                    if layout is not None:
+                        layouts_dict[layout].append(variant)
 
-    # Create default variants for layouts without variants
-    layout_codes_with_variants = {variant.layout for variant in variants}
-    for layout in layouts:
-        if layout.layout not in layout_codes_with_variants:
-            default_variant = KeyboardVariantName(variant="default", layout=layout.layout, name="Default")
-            variants.append(default_variant)
+    return models, layouts_dict
 
-    return models, layouts, variants
+
+def get_keyboard_options() -> tuple[list[KeyboardModelName], dict[KeyboardLayoutName, list[KeyboardVariantName]]]:
+    """Get a list of keyboard models and a dict mapping layouts to their variants."""
+    return parse_keyboard_options(get_available_keyboard_layouts())

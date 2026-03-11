@@ -1,14 +1,14 @@
 """Unit tests for the arch_javid_installer.helpers module."""
 
-from arch_javid_installer.helpers import get_keyboard_options
+from arch_javid_installer.helpers import parse_keyboard_options
 from arch_javid_installer.models import KeyboardLayoutName, KeyboardModelName, KeyboardVariantName
 
 
 class TestKeyboardHelpers:
     """Unit tests for keyboard helper functions."""
 
-    def test_get_keyboard_options(self) -> None:
-        """Test the get_keyboard_options function."""
+    def test_parse_keyboard_options(self) -> None:
+        """Test the parse_keyboard_options function."""
         mock_models = [
             KeyboardModelName(model="pc86", name="Generic 86-key PC"),
             KeyboardModelName(model="pc101", name="Generic 101-key PC"),
@@ -43,7 +43,8 @@ class TestKeyboardHelpers:
             *[_mock_variant_line(variant) for variant in mock_variants],
         ]
 
-        models, layouts, variants = get_keyboard_options(mock_layouts_file_content)
+        models, layouts_dict = parse_keyboard_options(mock_layouts_file_content)
         assert models == mock_models
-        assert layouts == mock_layouts
-        assert variants == [*mock_variants, KeyboardVariantName(variant="default", layout="us", name="Default")]
+        assert list(layouts_dict.keys()) == mock_layouts
+        assert layouts_dict[mock_layouts[0]] == mock_variants
+        assert layouts_dict[mock_layouts[1]] == []
