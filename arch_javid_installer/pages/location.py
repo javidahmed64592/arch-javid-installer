@@ -17,11 +17,14 @@ class LocationPage(QWizardPage):
     A symlink will be created: `ln -sf /usr/share/zoneinfo/{region}/{timezone} /etc/localtime`
     """
 
-    def __init__(self, regions_dict: dict[RegionOptions, list[str]], default_region: RegionOptions) -> None:
+    def __init__(
+        self, regions_dict: dict[RegionOptions, list[str]], default_region: RegionOptions, default_zone: str
+    ) -> None:
         """Initialize the location page."""
         super().__init__()
         self._regions_dict = regions_dict
         self._default_region = default_region
+        self._default_zone = default_zone
 
         self.setTitle("Location")
 
@@ -68,3 +71,8 @@ class LocationPage(QWizardPage):
         timezones = self._regions_dict[selected_region]
         for timezone in timezones:
             self.timezone_list.addItem(timezone)
+
+        # Set the default timezone if it exists in the new list
+        if self._default_zone in timezones:
+            default_zone_index = timezones.index(self._default_zone)
+            self.timezone_list.setCurrentIndex(default_zone_index)
