@@ -5,6 +5,8 @@ import subprocess
 from arch_javid_installer.models import RegionOptions
 
 SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
+KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
+
 ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
 
 
@@ -28,11 +30,20 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
 def get_supported_locales() -> list[str]:
     """Get a list of supported locales from the system."""
     result = run_command(read_file_command(SUPPORTED_LOCALES_FILEPATH))
-    return result.stdout.splitlines()
+    locales: list[str] = result.stdout.splitlines()
+    return locales
 
 
 def get_zones_for_region(region: RegionOptions) -> list[str]:
     """Get a list of timezones for a given region."""
     directory = f"{ZONEINFO_DIRECTORY}/{region}"
     result = run_command(list_directory_command(directory))
-    return result.stdout.splitlines()
+    zones: list[str] = result.stdout.splitlines()
+    return zones
+
+
+def get_available_keyboard_layouts() -> list[str]:
+    """Get a list of keyboard models, layouts, and variants."""
+    result = run_command(read_file_command(KEYBOARD_LAYOUTS_FILEPATH))
+    lines: list[str] = result.stdout.splitlines()
+    return lines
