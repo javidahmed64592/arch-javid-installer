@@ -122,7 +122,9 @@ def parse_keyboard_options(
                     models.append(model)
             case KeyboardLayoutSectionMarkers.LAYOUT:
                 if layout := _parse_keyboard_layout_line(line):
-                    layouts_dict[layout] = []
+                    layouts_dict[layout] = [
+                        KeyboardVariantName(variant="default", layout=layout.layout, name="Default")
+                    ]
             case KeyboardLayoutSectionMarkers.VARIANT:
                 if variant := _parse_keyboard_variant_line(line):
                     layout = next((layout for layout in layouts_dict.keys() if layout.layout == variant.layout), None)

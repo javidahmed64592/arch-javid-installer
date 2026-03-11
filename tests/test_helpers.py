@@ -46,5 +46,10 @@ class TestKeyboardHelpers:
         models, layouts_dict = parse_keyboard_options(mock_layouts_file_content)
         assert models == mock_models
         assert list(layouts_dict.keys()) == mock_layouts
-        assert layouts_dict[mock_layouts[0]] == mock_variants
-        assert layouts_dict[mock_layouts[1]] == []
+        assert layouts_dict[mock_layouts[0]] == [
+            KeyboardVariantName(variant="default", layout=mock_layouts[0].layout, name="Default"),
+            *mock_variants,
+        ]
+        assert layouts_dict[mock_layouts[1]] == [
+            KeyboardVariantName(variant="default", layout=mock_layouts[1].layout, name="Default")
+        ]
