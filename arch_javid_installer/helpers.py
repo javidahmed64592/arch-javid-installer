@@ -49,7 +49,7 @@ def get_language_options() -> dict[str, str]:
     return dict(sorted(language_options.items(), key=lambda item: item[1]))
 
 
-def get_regions_dict() -> dict[str, list[str]]:
+def get_region_options() -> dict[str, list[str]]:
     """Get a dictionary of regions and their corresponding timezones."""
     return {region: get_zones_for_region(region) for region in RegionOptions}
 
