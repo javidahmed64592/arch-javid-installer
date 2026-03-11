@@ -37,7 +37,7 @@ class KeyboardPage(QWizardPage):
         self.keyboard_model_list = QComboBox()
 
         for model in self._models:
-            self.keyboard_model_list.addItem(f"{model.name} ({model.model})", model)
+            self.keyboard_model_list.addItem(model.name, model)
 
         # Set the default model
         default_model_index = self._models.index(self._default_model)
@@ -50,9 +50,7 @@ class KeyboardPage(QWizardPage):
         self.keyboard_layout_list = QComboBox()
 
         for keyboard_layout in self._layouts_dict.keys():
-            self.keyboard_layout_list.addItem(
-                f"{keyboard_layout.name} ({keyboard_layout.layout.upper()})", keyboard_layout
-            )
+            self.keyboard_layout_list.addItem(keyboard_layout.name, keyboard_layout)
 
         # Set the default layout
         default_layout_index = list(self._layouts_dict.keys()).index(self._default_layout)
@@ -86,4 +84,4 @@ class KeyboardPage(QWizardPage):
         # Add variants for the selected layout
         variants = self._layouts_dict[selected_layout]
         for variant in variants:
-            self.keyboard_variant_list.addItem(f"{variant.name} ({variant.variant.upper()})", variant)
+            self.keyboard_variant_list.addItem(variant.name, variant)
