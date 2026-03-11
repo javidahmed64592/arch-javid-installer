@@ -10,6 +10,8 @@ class KeyboardPage(QWizardPage):
 
     This page allows the user to select their keyboard model, layout, and variant.
     The available variants depend on the selected layout.
+
+    The available options are retrieved from `/usr/share/X11/xkb/rules/base.lst`.
     """
 
     def __init__(
