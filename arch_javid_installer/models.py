@@ -8,6 +8,19 @@ from pydantic import BaseModel, Field
 
 
 # Pre-installation models
+class PagesEnum(StrEnum):
+    """Enum for installer pages."""
+
+    WELCOME = auto()
+    LOCATION = auto()
+    KEYBOARD = auto()
+    DISK = auto()
+    USER = auto()
+    SUMMARY = auto()
+    INSTALL = auto()
+    FINISH = auto()
+
+
 # Language model
 class LanguageChoice(BaseModel):
     """Model for language choice."""

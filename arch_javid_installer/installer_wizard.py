@@ -8,7 +8,7 @@ from arch_javid_installer.helpers import (
     get_language_options,
     get_region_options,
 )
-from arch_javid_installer.models import RegionOptions
+from arch_javid_installer.models import PagesEnum, RegionOptions
 from arch_javid_installer.pages import (
     DiskPage,
     FinishPage,
@@ -35,18 +35,18 @@ class InstallerWizard(QWizard):
         _disk_options = get_disk_options()
 
         self.pages = {
-            "welcome": WelcomePage(
+            PagesEnum.WELCOME: WelcomePage(
                 title="Welcome",
                 language_options=_language_options,
                 default_locale="en_GB.UTF-8",
             ),
-            "location": LocationPage(
+            PagesEnum.LOCATION: LocationPage(
                 title="Location",
                 regions_dict=_regions_options,
                 default_region=RegionOptions.EUROPE,
                 default_zone="London",
             ),
-            "keyboard": KeyboardPage(
+            PagesEnum.KEYBOARD: KeyboardPage(
                 title="Keyboard",
                 models=_keyboard_models,
                 layouts_dict=_keyboard_layouts_dict,
@@ -58,20 +58,20 @@ class InstallerWizard(QWizard):
                     next(iter(_keyboard_layouts_dict.keys())),
                 ),
             ),
-            "disk": DiskPage(
+            PagesEnum.DISK: DiskPage(
                 title="Disk Selection",
                 disk_options=_disk_options,
             ),
-            "user": UserPage(
+            PagesEnum.USER: UserPage(
                 title="User Account",
             ),
-            "summary": SummaryPage(
+            PagesEnum.SUMMARY: SummaryPage(
                 title="Summary",
             ),
-            "install": InstallPage(
+            PagesEnum.INSTALL: InstallPage(
                 title="Installation",
             ),
-            "finish": FinishPage(
+            PagesEnum.FINISH: FinishPage(
                 title="Complete",
             ),
         }
