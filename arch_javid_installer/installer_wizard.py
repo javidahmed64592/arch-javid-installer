@@ -2,7 +2,12 @@
 
 from PySide6.QtWidgets import QWizard
 
-from arch_javid_installer.helpers import get_keyboard_options, get_language_options, get_region_options
+from arch_javid_installer.helpers import (
+    get_disk_options,
+    get_keyboard_options,
+    get_language_options,
+    get_region_options,
+)
 from arch_javid_installer.models import RegionOptions
 from arch_javid_installer.pages import (
     DiskPage,
@@ -27,6 +32,7 @@ class InstallerWizard(QWizard):
         _language_options = get_language_options()
         _regions_options = get_region_options()
         _keyboard_models, _keyboard_layouts_dict = get_keyboard_options()
+        _disk_options = get_disk_options()
 
         self.pages = {
             "welcome": WelcomePage(language_options=_language_options, default_locale="en_GB.UTF-8"),
@@ -44,7 +50,7 @@ class InstallerWizard(QWizard):
                     next(iter(_keyboard_layouts_dict.keys())),
                 ),
             ),
-            "disk": DiskPage(),
+            "disk": DiskPage(disk_options=_disk_options),
             "user": UserPage(),
             "summary": SummaryPage(),
             "install": InstallPage(),
