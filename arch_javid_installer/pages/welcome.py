@@ -21,25 +21,26 @@ class WelcomePage(QWizardPage):
     def __init__(self, language_options: dict[str, str], default_locale: str) -> None:
         """Initialize the welcome page."""
         super().__init__()
+        self.setTitle("Welcome")
         self._language_options = language_options
         self._default_locale = default_locale
 
-        self.setTitle("Welcome")
-
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Welcome to the Arch-Javid Installer!"))
 
-        # Language selection
+        layout.addWidget(QLabel("Welcome to the Arch-Javid Installer!"))
+        self._add_language_selection(layout)
+
+        self.setLayout(layout)
+
+    def _add_language_selection(self, layout: QVBoxLayout) -> None:
+        """Add the language selection to the layout."""
         layout.addWidget(QLabel("Select your language:"))
         self.language_list = QComboBox()
 
-        for language in language_options.values():
+        for language in self._language_options.values():
             self.language_list.addItem(language)
 
-        # Set the default language
-        default_index = list(language_options.keys()).index(self._default_locale)
+        default_index = list(self._language_options.keys()).index(self._default_locale)
         self.language_list.setCurrentIndex(default_index)
 
         layout.addWidget(self.language_list)
-
-        self.setLayout(layout)
