@@ -32,7 +32,24 @@ class DiskPage(QWizardPage):
 
         layout = QVBoxLayout()
 
-        # Disk selection
+        self._add_disk_selection(layout)
+        self._add_details_group(layout)
+        self._add_partition_table(layout)
+
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setFrameShadow(QFrame.Shadow.Sunken)
+        layout.addWidget(separator)
+
+        self._add_partitioning_mode_selection(layout)
+        self.setLayout(layout)
+
+        self.disk.currentIndexChanged.connect(self._on_disk_changed)
+        if self._disk_options.blockdevices:
+            self._on_disk_changed(0)
+
+    def _add_disk_selection(self, layout: QVBoxLayout) -> None:
+        """Add the disk selection combo box to the layout."""
         layout.addWidget(QLabel("Target:"))
         self.disk = QComboBox()
         for device in self._disk_options.blockdevices:
@@ -42,7 +59,8 @@ class DiskPage(QWizardPage):
             self.disk.addItem(display, device)
         layout.addWidget(self.disk)
 
-        # Disk details group
+    def _add_details_group(self, layout: QVBoxLayout) -> None:
+        """Add the disk details group to the layout."""
         self._details_group = QGroupBox("Disk Details")
         details_layout = QGridLayout()
         details_layout.setColumnStretch(1, 1)
@@ -70,7 +88,8 @@ class DiskPage(QWizardPage):
         self._details_group.setLayout(details_layout)
         layout.addWidget(self._details_group)
 
-        # Partition table
+    def _add_partition_table(self, layout: QVBoxLayout) -> None:
+        """Add the partition table to the layout."""
         self._partitions_group = QGroupBox("Partitions")
         partitions_layout = QVBoxLayout()
 
@@ -88,13 +107,8 @@ class DiskPage(QWizardPage):
         self._partitions_group.setLayout(partitions_layout)
         layout.addWidget(self._partitions_group)
 
-        # Separator
-        separator = QFrame()
-        separator.setFrameShape(QFrame.Shape.HLine)
-        separator.setFrameShadow(QFrame.Shadow.Sunken)
-        layout.addWidget(separator)
-
-        # Partitioning mode selection
+    def _add_partitioning_mode_selection(self, layout: QVBoxLayout) -> None:
+        """Add the partitioning mode selection radio buttons to the layout."""
         layout.addWidget(QLabel("Partitioning Mode:"))
         self.partition_mode_erase = QRadioButton("Erase disk")
         self.partition_mode_manual = QRadioButton("Manual partitioning")
@@ -103,13 +117,6 @@ class DiskPage(QWizardPage):
         layout.addWidget(self.partition_mode_erase)
         layout.addWidget(self.partition_mode_manual)
         layout.addWidget(self.partition_mode_alongside)
-
-        self.setLayout(layout)
-
-        # Connect signal and show initial disk
-        self.disk.currentIndexChanged.connect(self._on_disk_changed)
-        if self._disk_options.blockdevices:
-            self._on_disk_changed(0)
 
     def _on_disk_changed(self, index: int) -> None:
         """Update the detail panel when the selected disk changes."""
