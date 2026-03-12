@@ -6,10 +6,10 @@ from PySide6.QtWidgets import QLabel, QLineEdit, QRadioButton, QVBoxLayout, QWiz
 class UserPage(QWizardPage):
     """User page of the installer."""
 
-    def __init__(self) -> None:
+    def __init__(self, title: str) -> None:
         """Initialize the user page."""
         super().__init__()
-        self.setTitle("User Account")
+        self.setTitle(title)
 
         layout = QVBoxLayout()
 

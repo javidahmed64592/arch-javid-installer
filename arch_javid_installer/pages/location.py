@@ -18,11 +18,11 @@ class LocationPage(QWizardPage):
     """
 
     def __init__(
-        self, regions_dict: dict[RegionOptions, list[str]], default_region: RegionOptions, default_zone: str
+        self, title: str, regions_dict: dict[RegionOptions, list[str]], default_region: RegionOptions, default_zone: str
     ) -> None:
         """Initialize the location page."""
         super().__init__()
-        self.setTitle("Location")
+        self.setTitle(title)
         self._regions_dict = regions_dict
         self._default_region = default_region
         self._default_zone = default_zone

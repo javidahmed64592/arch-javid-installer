@@ -18,10 +18,10 @@ class WelcomePage(QWizardPage):
     `LC_TELEPHONE`, `LC_TIME`]
     """
 
-    def __init__(self, language_options: dict[str, str], default_locale: str) -> None:
+    def __init__(self, title: str, language_options: dict[str, str], default_locale: str) -> None:
         """Initialize the welcome page."""
         super().__init__()
-        self.setTitle("Welcome")
+        self.setTitle(title)
         self._language_options = language_options
         self._default_locale = default_locale
 

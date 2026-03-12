@@ -16,6 +16,7 @@ class KeyboardPage(QWizardPage):
 
     def __init__(
         self,
+        title: str,
         models: list[KeyboardModelName],
         layouts_dict: dict[KeyboardLayoutName, list[KeyboardVariantName]],
         default_model: KeyboardModelName,
@@ -23,7 +24,7 @@ class KeyboardPage(QWizardPage):
     ) -> None:
         """Initialize the keyboard page."""
         super().__init__()
-        self.setTitle("Keyboard")
+        self.setTitle(title)
         self._models = models
         self._layouts_dict = layouts_dict
         self._default_model = default_model

@@ -6,11 +6,10 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QWizardPage
 class SummaryPage(QWizardPage):
     """Summary page of the installer."""
 
-    def __init__(self) -> None:
+    def __init__(self, title: str) -> None:
         """Initialize the summary page."""
         super().__init__()
-
-        self.setTitle("Summary")
+        self.setTitle(title)
 
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Your OS will be installed with the following settings:"))

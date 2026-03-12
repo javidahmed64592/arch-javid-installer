@@ -23,10 +23,10 @@ class DiskPage(QWizardPage):
 
     _na = "—"
 
-    def __init__(self, disk_options: DiskInfo) -> None:
+    def __init__(self, title: str, disk_options: DiskInfo) -> None:
         """Initialize the disk page."""
         super().__init__()
-        self.setTitle("Disk Selection")
+        self.setTitle(title)
         self._disk_options = disk_options
 
         layout = QVBoxLayout()

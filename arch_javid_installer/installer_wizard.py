@@ -35,11 +35,19 @@ class InstallerWizard(QWizard):
         _disk_options = get_disk_options()
 
         self.pages = {
-            "welcome": WelcomePage(language_options=_language_options, default_locale="en_GB.UTF-8"),
+            "welcome": WelcomePage(
+                title="Welcome",
+                language_options=_language_options,
+                default_locale="en_GB.UTF-8",
+            ),
             "location": LocationPage(
-                regions_dict=_regions_options, default_region=RegionOptions.EUROPE, default_zone="London"
+                title="Location",
+                regions_dict=_regions_options,
+                default_region=RegionOptions.EUROPE,
+                default_zone="London",
             ),
             "keyboard": KeyboardPage(
+                title="Keyboard",
                 models=_keyboard_models,
                 layouts_dict=_keyboard_layouts_dict,
                 default_model=next(
@@ -50,11 +58,22 @@ class InstallerWizard(QWizard):
                     next(iter(_keyboard_layouts_dict.keys())),
                 ),
             ),
-            "disk": DiskPage(disk_options=_disk_options),
-            "user": UserPage(),
-            "summary": SummaryPage(),
-            "install": InstallPage(),
-            "finish": FinishPage(),
+            "disk": DiskPage(
+                title="Disk Selection",
+                disk_options=_disk_options,
+            ),
+            "user": UserPage(
+                title="User Account",
+            ),
+            "summary": SummaryPage(
+                title="Summary",
+            ),
+            "install": InstallPage(
+                title="Installation",
+            ),
+            "finish": FinishPage(
+                title="Complete",
+            ),
         }
 
         self.setWindowTitle("Arch-Javid Installer")
