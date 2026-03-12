@@ -47,3 +47,9 @@ def get_available_keyboard_layouts() -> list[str]:
     result = run_command(read_file_command(KEYBOARD_LAYOUTS_FILEPATH))
     lines: list[str] = result.stdout.splitlines()
     return lines
+
+
+def get_disks_json() -> str:
+    """Get a JSON string of available disks and their partitions."""
+    result = run_command(["lsblk", "-J", "-o", "NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"])
+    return result.stdout

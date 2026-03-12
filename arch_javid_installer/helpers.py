@@ -1,16 +1,24 @@
 """Helper methods for the installer."""
 
+import json
+
 from babel import Locale
 from babel.core import UnknownLocaleError
 
 from arch_javid_installer.models import (
+    DiskInfo,
     KeyboardLayoutName,
     KeyboardLayoutSectionMarkers,
     KeyboardModelName,
     KeyboardVariantName,
     RegionOptions,
 )
-from arch_javid_installer.shell import get_available_keyboard_layouts, get_supported_locales, get_zones_for_region
+from arch_javid_installer.shell import (
+    get_available_keyboard_layouts,
+    get_disks_json,
+    get_supported_locales,
+    get_zones_for_region,
+)
 
 
 # Pre-installation methods
@@ -137,3 +145,13 @@ def parse_keyboard_options(
 def get_keyboard_options() -> tuple[list[KeyboardModelName], dict[KeyboardLayoutName, list[KeyboardVariantName]]]:
     """Get a list of keyboard models and a dict mapping layouts to their variants."""
     return parse_keyboard_options(get_available_keyboard_layouts())
+
+
+def parse_disk_options(disks_json: str) -> DiskInfo:
+    """Get a list of available disks and their partitions."""
+    return DiskInfo(**json.loads(disks_json))
+
+
+def get_disk_options() -> DiskInfo:
+    """Get a list of available disks and their partitions."""
+    return parse_disk_options(get_disks_json())

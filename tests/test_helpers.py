@@ -1,7 +1,13 @@
 """Unit tests for the arch_javid_installer.helpers module."""
 
-from arch_javid_installer.helpers import parse_keyboard_options
-from arch_javid_installer.models import KeyboardLayoutName, KeyboardModelName, KeyboardVariantName
+from arch_javid_installer.helpers import parse_disk_options, parse_keyboard_options
+from arch_javid_installer.models import (
+    BlockDevice,
+    DiskInfo,
+    KeyboardLayoutName,
+    KeyboardModelName,
+    KeyboardVariantName,
+)
 
 
 class TestKeyboardHelpers:
@@ -53,3 +59,50 @@ class TestKeyboardHelpers:
         assert layouts_dict[mock_layouts[1]] == [
             KeyboardVariantName(variant="default", layout=mock_layouts[1].layout, name="Default")
         ]
+
+
+class TestDiskHelpers:
+    """Unit tests for disk helper functions."""
+
+    def test_parse_disk_options(self) -> None:
+        """Test the parse_disk_options function."""
+        mock_blockdevices = [
+            BlockDevice(
+                name="sda",
+                size="100G",
+                model="Mock Disk 1",
+                label=None,
+                fstype=None,
+                mountpoint=None,
+                children=[
+                    BlockDevice(
+                        name="sda1",
+                        size="2G",
+                        model=None,
+                        label=None,
+                        fstype="vfat",
+                        mountpoint="/boot",
+                    ),
+                    BlockDevice(
+                        name="sda2",
+                        size="98G",
+                        model=None,
+                        label=None,
+                        fstype="btrfs",
+                        mountpoint="/mock/var/tmp",
+                    ),
+                ],
+            ),
+            BlockDevice(
+                name="sdb",
+                size="200G",
+                model="Mock Disk 2",
+                label="MockDisk2",
+                fstype="ext4",
+                mountpoint="/home/mockdisk2",
+            ),
+        ]
+        mock_disk_info = DiskInfo(blockdevices=mock_blockdevices)
+
+        disk_info = parse_disk_options(mock_disk_info.model_dump_json())
+        assert disk_info == mock_disk_info
