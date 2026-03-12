@@ -22,15 +22,22 @@ class LocationPage(QWizardPage):
     ) -> None:
         """Initialize the location page."""
         super().__init__()
+        self.setTitle("Location")
         self._regions_dict = regions_dict
         self._default_region = default_region
         self._default_zone = default_zone
 
-        self.setTitle("Location")
-
         layout = QVBoxLayout()
 
-        # Region selection
+        self._add_region_selection(layout)
+        self._add_timezone_selection(layout)
+
+        self.region_list.currentIndexChanged.connect(self._update_timezones)
+
+        self.setLayout(layout)
+
+    def _add_region_selection(self, layout: QVBoxLayout) -> None:
+        """Add the region selection to the layout."""
         layout.addWidget(QLabel("Region:"))
         self.region_list = QComboBox()
 
@@ -43,36 +50,25 @@ class LocationPage(QWizardPage):
 
         layout.addWidget(self.region_list)
 
-        # Timezone selection
+    def _add_timezone_selection(self, layout: QVBoxLayout) -> None:
+        """Add the timezone selection to the layout."""
         layout.addWidget(QLabel("Timezone:"))
         self.timezone_list = QComboBox()
-        layout.addWidget(self.timezone_list)
 
-        # Populate initial timezones
         self._update_timezones()
-
-        # Connect signal to update timezones when region changes
-        self.region_list.currentIndexChanged.connect(self._update_timezones)
-
         layout.addWidget(self.timezone_list)
-
-        self.setLayout(layout)
 
     def _update_timezones(self) -> None:
         """Update the timezone list based on the selected region."""
-        # Get the selected region
         selected_region_str = self.region_list.currentText()
         selected_region = RegionOptions(selected_region_str)
 
-        # Clear existing timezones
         self.timezone_list.clear()
 
-        # Add timezones for the selected region
         timezones = self._regions_dict[selected_region]
         for timezone in timezones:
             self.timezone_list.addItem(timezone)
 
-        # Set the default timezone if it exists in the new list
         if self._default_zone in timezones:
             default_zone_index = timezones.index(self._default_zone)
             self.timezone_list.setCurrentIndex(default_zone_index)
