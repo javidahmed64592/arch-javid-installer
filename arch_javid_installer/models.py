@@ -56,6 +56,13 @@ class RegionOptions(StrEnum):
     PACIFIC = "Pacific"
 
 
+class RegionInfo(BaseModel):
+    """Model for region information."""
+
+    region: RegionOptions = Field(..., description="The name of the region.")
+    zones: list[str] = Field(..., description="A list of timezones in the region.")
+
+
 class LocationChoice(BaseModel):
     """Model for timezone and location."""
 

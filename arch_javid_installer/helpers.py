@@ -13,6 +13,7 @@ from arch_javid_installer.models import (
     KeyboardModelName,
     KeyboardVariantName,
     LocaleInfo,
+    RegionInfo,
     RegionOptions,
 )
 from arch_javid_installer.shell import (
@@ -58,9 +59,9 @@ def get_language_options() -> list[LocaleInfo]:
     return sorted(language_options, key=lambda option: option.display_name)
 
 
-def get_region_options() -> dict[RegionOptions, list[str]]:
-    """Get a dictionary of regions and their corresponding timezones."""
-    return {region: get_zones_for_region(region) for region in RegionOptions}
+def get_region_options() -> list[RegionInfo]:
+    """Get a list of regions and their corresponding timezones."""
+    return [RegionInfo(region=region, zones=get_zones_for_region(region)) for region in RegionOptions]
 
 
 def _keyboard_layout_parser(func: Callable) -> Callable:

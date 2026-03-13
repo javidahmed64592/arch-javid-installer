@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWizardPage
 
-from arch_javid_installer.models import LocationChoice, RegionOptions
+from arch_javid_installer.models import LocationChoice, RegionInfo, RegionOptions
 
 
 class LocationPage(QWizardPage):
@@ -16,12 +16,12 @@ class LocationPage(QWizardPage):
     """
 
     def __init__(
-        self, title: str, regions_dict: dict[RegionOptions, list[str]], default_region: RegionOptions, default_zone: str
+        self, title: str, regions_options: list[RegionInfo], default_region: RegionOptions, default_zone: str
     ) -> None:
         """Initialize the location page."""
         super().__init__()
         self.setTitle(title)
-        self._regions_dict = regions_dict
+        self._regions_options = regions_options
         self._default_region = default_region
         self._default_zone = default_zone
 
@@ -39,11 +39,13 @@ class LocationPage(QWizardPage):
         layout.addWidget(QLabel("Region:"))
         self.region_list = QComboBox()
 
-        for region in self._regions_dict.keys():
-            self.region_list.addItem(region.value)
+        for region_info in self._regions_options:
+            self.region_list.addItem(region_info.region.value)
 
         # Set the default region
-        default_index = list(self._regions_dict.keys()).index(self._default_region)
+        default_index = next(
+            (i for i, region_info in enumerate(self._regions_options) if region_info.region == self._default_region), 0
+        )
         self.region_list.setCurrentIndex(default_index)
 
         layout.addWidget(self.region_list)
@@ -63,7 +65,11 @@ class LocationPage(QWizardPage):
 
         self.timezone_list.clear()
 
-        timezones = self._regions_dict[selected_region]
+        region_info = next((r for r in self._regions_options if r.region == selected_region), None)
+        if region_info is None:
+            return
+
+        timezones = region_info.zones
         for timezone in timezones:
             self.timezone_list.addItem(timezone)
 

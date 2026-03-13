@@ -45,7 +45,7 @@ class InstallerWizard(QWizard):
             ),
             PagesEnum.LOCATION: LocationPage(
                 title="Location",
-                regions_dict=_regions_options,
+                regions_options=_regions_options,
                 default_region=RegionOptions.EUROPE,
                 default_zone="London",
             ),
