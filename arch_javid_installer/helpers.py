@@ -64,40 +64,35 @@ def get_region_options() -> list[RegionInfo]:
 
 def _keyboard_layout_parser(func: Callable) -> Callable:
     """Wrap a keyboard layout parser function."""
-    _expected_len_parts = 2
 
-    def wrapper(line: str) -> KeyboardModelName | KeyboardLayoutName | KeyboardVariantName | None:
+    def wrapper(line: str) -> KeyboardModelName | KeyboardLayoutName | KeyboardVariantName:
         parts = line.split(maxsplit=1)
-        if len(parts) != _expected_len_parts:
-            return None
-        parsed_line: KeyboardModelName | KeyboardLayoutName | KeyboardVariantName | None = func(parts) or None
+        parsed_line: KeyboardModelName | KeyboardLayoutName | KeyboardVariantName = func(parts)
         return parsed_line
 
     return wrapper
 
 
 @_keyboard_layout_parser
-def _parse_keyboard_model_line(parts: list[str]) -> KeyboardModelName | None:
+def _parse_keyboard_model_line(parts: list[str]) -> KeyboardModelName:
     """Parse a keyboard model line."""
     model_code, model_name = parts
     return KeyboardModelName(model=model_code.strip(), name=model_name.strip())
 
 
 @_keyboard_layout_parser
-def _parse_keyboard_layout_line(parts: list[str]) -> KeyboardLayoutName | None:
+def _parse_keyboard_layout_line(parts: list[str]) -> KeyboardLayoutName:
     """Parse a keyboard layout line."""
     layout_code, layout_name = parts
     return KeyboardLayoutName(layout=layout_code.strip(), name=layout_name.strip())
 
 
 @_keyboard_layout_parser
-def _parse_keyboard_variant_line(parts: list[str]) -> KeyboardVariantName | None:
+def _parse_keyboard_variant_line(parts: list[str]) -> KeyboardVariantName:
     """Parse a keyboard variant line."""
     variant_code, rest = parts
     variant_code = parts[0].strip()
     rest = parts[1].strip()
-    if ": " not in rest:
-        return None
     layout_code, variant_name = rest.split(": ", 1)
     return KeyboardVariantName(variant=variant_code, layout=layout_code.strip(), name=variant_name.strip())
 
@@ -127,18 +122,14 @@ def parse_keyboard_options(
         # Parse the line based on the current section
         match current_section:
             case KeyboardLayoutSectionMarkers.MODEL:
-                if model := _parse_keyboard_model_line(line):
-                    models.append(model)
+                models.append(_parse_keyboard_model_line(line))
             case KeyboardLayoutSectionMarkers.LAYOUT:
-                if layout := _parse_keyboard_layout_line(line):
-                    layouts_dict[layout] = [
-                        KeyboardVariantName(variant="default", layout=layout.layout, name="Default")
-                    ]
+                layout = _parse_keyboard_layout_line(line)
+                layouts_dict[layout] = [KeyboardVariantName(variant="default", layout=layout.layout, name="Default")]
             case KeyboardLayoutSectionMarkers.VARIANT:
-                if variant := _parse_keyboard_variant_line(line):
-                    layout = next((layout for layout in layouts_dict.keys() if layout.layout == variant.layout), None)
-                    if layout is not None:
-                        layouts_dict[layout].append(variant)
+                variant = _parse_keyboard_variant_line(line)
+                layout = next(layout for layout in layouts_dict.keys() if layout.layout == variant.layout)
+                layouts_dict[layout].append(variant)
 
     return models, layouts_dict
 

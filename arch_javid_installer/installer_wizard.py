@@ -27,6 +27,7 @@ class InstallerWizard(QWizard):
     def __init__(self) -> None:
         """Initialize the installer wizard."""
         super().__init__()
+        self.setWindowTitle("Arch-Javid Installer")
 
         # Installation configuration will be set by SummaryPage
         self.installation_config: InstallationConfig | None = None
@@ -79,7 +80,5 @@ class InstallerWizard(QWizard):
             ),
         }
 
-        self.setWindowTitle("Arch-Javid Installer")
-
-        for i, page in enumerate(self.pages.values()):
-            self.setPage(i, page)
+        for page_enum, page in self.pages.items():
+            self.setPage(PagesEnum.page_id(page_enum), page)
