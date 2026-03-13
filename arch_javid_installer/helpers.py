@@ -45,9 +45,6 @@ def get_language_options() -> list[LocaleInfo]:
     """Convert a list of supported locales to a list of language options."""
     language_options: list[LocaleInfo] = []
     for locale_line in get_supported_locales():
-        if not locale_line.strip() or locale_line.startswith("#"):
-            continue
-
         locale_code = locale_line.split(maxsplit=1)[0]
         display_name = get_name_from_language_code(locale_code)
 
@@ -61,7 +58,8 @@ def get_language_options() -> list[LocaleInfo]:
 
 def get_region_options() -> list[RegionInfo]:
     """Get a list of regions and their corresponding timezones."""
-    return [RegionInfo(region=region, zones=get_zones_for_region(region)) for region in RegionOptions]
+    region_options = [RegionInfo(region=region, zones=get_zones_for_region(region)) for region in RegionOptions]
+    return sorted(region_options, key=lambda option: option.region)
 
 
 def _keyboard_layout_parser(func: Callable) -> Callable:
