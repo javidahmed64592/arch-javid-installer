@@ -52,4 +52,5 @@ def get_available_keyboard_layouts() -> list[str]:
 def get_disks_json() -> str:
     """Get a JSON string of available disks and their partitions."""
     result = run_command(["lsblk", "-J", "-o", "NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"])
-    return result.stdout
+    disks: str = result.stdout
+    return disks
