@@ -2,6 +2,8 @@
 
 from PySide6.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWizardPage
 
+from arch_javid_installer.models import LanguageChoice
+
 
 class WelcomePage(QWizardPage):
     """Welcome page of the installer.
@@ -44,3 +46,9 @@ class WelcomePage(QWizardPage):
         self.language_list.setCurrentIndex(default_index)
 
         layout.addWidget(self.language_list)
+
+    def get_choice(self) -> LanguageChoice:
+        """Get the selected language choice."""
+        current_index = self.language_list.currentIndex()
+        selected_locale = list(self._language_options.keys())[current_index]
+        return LanguageChoice(locale=selected_locale)

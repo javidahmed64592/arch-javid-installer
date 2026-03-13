@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QWizardPage,
 )
 
-from arch_javid_installer.models import BlockDevice, DiskInfo
+from arch_javid_installer.models import BlockDevice, DiskChoice, DiskInfo, PartitionMode
 
 
 class DiskPage(QWizardPage):
@@ -109,19 +109,18 @@ class DiskPage(QWizardPage):
     def _add_partitioning_mode_selection(self, layout: QVBoxLayout) -> None:
         """Add the partitioning mode selection radio buttons to the layout."""
         layout.addWidget(QLabel("Partitioning Mode:"))
-        self.partition_mode_erase = QRadioButton("Erase disk")
-        self.partition_mode_manual = QRadioButton("Manual partitioning")
-        self.partition_mode_alongside = QRadioButton("Install alongside existing OS")
+        self.partition_modes = {
+            PartitionMode.ERASE: QRadioButton("Erase disk"),
+            PartitionMode.MANUAL: QRadioButton("Manual partitioning"),
+            PartitionMode.ALONGSIDE: QRadioButton("Install alongside existing OS"),
+        }
 
-        layout.addWidget(self.partition_mode_erase)
-        layout.addWidget(self.partition_mode_manual)
-        layout.addWidget(self.partition_mode_alongside)
+        for button in self.partition_modes.values():
+            layout.addWidget(button)
 
     def _on_disk_changed(self, index: int) -> None:
         """Update the detail panel when the selected disk changes."""
         device: BlockDevice = self.disk.itemData(index)
-        if device is None:
-            return
 
         self._model_value.setText(device.model or self._na)
         self._size_value.setText(device.size)
@@ -169,3 +168,15 @@ class DiskPage(QWizardPage):
                 ]
             )
             tree.addTopLevelItem(item)
+
+    def validatePage(self) -> bool:  # noqa: N802
+        """Validate that a partition mode is selected."""
+        if not any(button.isChecked() for button in self.partition_modes.values()):
+            return False
+        return True
+
+    def get_choice(self) -> DiskChoice:
+        """Get the selected disk choice."""
+        selected_disk = self.disk.currentData()
+        partition_mode = next(mode for mode, button in self.partition_modes.items() if button.isChecked())
+        return DiskChoice(disk_to_use=selected_disk, partition_mode=partition_mode)

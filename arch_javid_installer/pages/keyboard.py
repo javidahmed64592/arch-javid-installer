@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWizardPage
 
-from arch_javid_installer.models import KeyboardLayoutName, KeyboardModelName, KeyboardVariantName
+from arch_javid_installer.models import KeyboardChoice, KeyboardLayoutName, KeyboardModelName, KeyboardVariantName
 
 
 class KeyboardPage(QWizardPage):
@@ -82,3 +82,10 @@ class KeyboardPage(QWizardPage):
         variants = self._layouts_dict[self.keyboard_layout_list.currentData()]
         for variant in variants:
             self.keyboard_variant_list.addItem(variant.name, variant)
+
+    def get_choice(self) -> KeyboardChoice:
+        """Get the selected keyboard choice."""
+        selected_model = self.keyboard_model_list.currentData()
+        selected_layout = self.keyboard_layout_list.currentData()
+        selected_variant = self.keyboard_variant_list.currentData()
+        return KeyboardChoice(model=selected_model, layout=selected_layout, variant=selected_variant)

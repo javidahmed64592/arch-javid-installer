@@ -20,6 +20,11 @@ class PagesEnum(StrEnum):
     INSTALL = auto()
     FINISH = auto()
 
+    @classmethod
+    def page_id(cls, page: PagesEnum) -> int:
+        """Get the page ID for a given page enum."""
+        return list(cls).index(page)
+
 
 # Language model
 class LanguageChoice(BaseModel):
@@ -118,9 +123,9 @@ class DiskInfo(BaseModel):
 class PartitionMode(StrEnum):
     """Enum for partitioning modes."""
 
-    ERASE = str(auto())
-    MANUAL = str(auto())
-    ALONGSIDE = str(auto())
+    ERASE = auto()
+    MANUAL = auto()
+    ALONGSIDE = auto()
 
 
 class DiskChoice(BaseModel):

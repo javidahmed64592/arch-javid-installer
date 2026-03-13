@@ -8,7 +8,7 @@ from arch_javid_installer.helpers import (
     get_language_options,
     get_region_options,
 )
-from arch_javid_installer.models import PagesEnum, RegionOptions
+from arch_javid_installer.models import InstallationConfig, PagesEnum, RegionOptions
 from arch_javid_installer.pages import (
     DiskPage,
     FinishPage,
@@ -27,6 +27,9 @@ class InstallerWizard(QWizard):
     def __init__(self) -> None:
         """Initialize the installer wizard."""
         super().__init__()
+
+        # Installation configuration will be set by SummaryPage
+        self.installation_config: InstallationConfig | None = None
 
         # Pre-installation
         _language_options = get_language_options()

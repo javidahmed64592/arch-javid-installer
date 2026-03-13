@@ -1,6 +1,8 @@
 """User page."""
 
-from PySide6.QtWidgets import QLabel, QLineEdit, QRadioButton, QVBoxLayout, QWizardPage
+from PySide6.QtWidgets import QLabel, QLineEdit, QMessageBox, QRadioButton, QVBoxLayout, QWizardPage
+
+from arch_javid_installer.models import UserChoice
 
 
 class UserPage(QWizardPage):
@@ -36,12 +38,12 @@ class UserPage(QWizardPage):
     def _add_password_fields(self, layout: QVBoxLayout) -> None:
         """Add the password fields to the layout."""
         self.password = QLineEdit()
-        self.password.setEchoMode(QLineEdit.Password)
+        self.password.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(QLabel("Password"))
         layout.addWidget(self.password)
 
         self.confirm_password = QLineEdit()
-        self.confirm_password.setEchoMode(QLineEdit.Password)
+        self.confirm_password.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(QLabel("Confirm Password"))
         layout.addWidget(self.confirm_password)
 
@@ -54,12 +56,12 @@ class UserPage(QWizardPage):
     def _add_root_password_fields(self, layout: QVBoxLayout) -> None:
         """Add the root password fields to the layout."""
         self.root_password = QLineEdit()
-        self.root_password.setEchoMode(QLineEdit.Password)
+        self.root_password.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(QLabel("Root Password"))
         layout.addWidget(self.root_password)
 
         self.confirm_root_password = QLineEdit()
-        self.confirm_root_password.setEchoMode(QLineEdit.Password)
+        self.confirm_root_password.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(QLabel("Confirm Root Password"))
         layout.addWidget(self.confirm_root_password)
 
@@ -67,3 +69,54 @@ class UserPage(QWizardPage):
         """Toggle the root password fields based on the state of the radio button."""
         self.root_password.setEnabled(not checked)
         self.confirm_root_password.setEnabled(not checked)
+
+    def validatePage(self) -> bool:  # noqa: N802, PLR0911
+        """Validate that all required fields are filled and passwords match."""
+        # Check all fields are filled
+        if not self.computer_name.text().strip():
+            QMessageBox.warning(self, "Validation Error", "Please enter a computer name.")
+            return False
+
+        if not self.username.text().strip():
+            QMessageBox.warning(self, "Validation Error", "Please enter a username.")
+            return False
+
+        if not self.password.text():
+            QMessageBox.warning(self, "Validation Error", "Please enter a password.")
+            return False
+
+        if not self.confirm_password.text():
+            QMessageBox.warning(self, "Validation Error", "Please confirm your password.")
+            return False
+
+        # Check passwords match
+        if self.password.text() != self.confirm_password.text():
+            QMessageBox.warning(self, "Validation Error", "Passwords do not match.")
+            return False
+
+        # Check root password if not using same password
+        if not self.root_same_password.isChecked():
+            if not self.root_password.text():
+                QMessageBox.warning(self, "Validation Error", "Please enter a root password.")
+                return False
+
+            if not self.confirm_root_password.text():
+                QMessageBox.warning(self, "Validation Error", "Please confirm the root password.")
+                return False
+
+            if self.root_password.text() != self.confirm_root_password.text():
+                QMessageBox.warning(self, "Validation Error", "Root passwords do not match.")
+                return False
+
+        return True
+
+    def get_choice(self) -> UserChoice:
+        """Get the user choice."""
+        root_password = self.password.text() if self.root_same_password.isChecked() else self.root_password.text()
+
+        return UserChoice(
+            computer_name=self.computer_name.text().strip(),
+            username=self.username.text().strip(),
+            password=self.password.text(),
+            root_password=root_password,
+        )

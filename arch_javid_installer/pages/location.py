@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWizardPage
 
-from arch_javid_installer.models import RegionOptions
+from arch_javid_installer.models import LocationChoice, RegionOptions
 
 
 class LocationPage(QWizardPage):
@@ -72,3 +72,10 @@ class LocationPage(QWizardPage):
         if self._default_zone in timezones:
             default_zone_index = timezones.index(self._default_zone)
             self.timezone_list.setCurrentIndex(default_zone_index)
+
+    def get_choice(self) -> LocationChoice:
+        """Get the selected location choice."""
+        selected_region_str = self.region_list.currentText()
+        selected_region = RegionOptions(selected_region_str)
+        selected_zone = self.timezone_list.currentText()
+        return LocationChoice(region=selected_region, zone=selected_zone)
