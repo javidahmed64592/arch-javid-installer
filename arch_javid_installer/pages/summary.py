@@ -88,6 +88,9 @@ class SummaryPage(QWizardPage):
         html += "<h3>User Account</h3>"
         html += f"<p><b>Computer Name:</b> {config.user.computer_name}</p>"
         html += f"<p><b>Username:</b> {config.user.username}</p>"
+        html += f"<p><b>Root Password:</b> {
+            'Same as user password' if config.user.password == config.user.root_password else 'Different password'
+        }</p>"
 
         html += "</body></html>"
 
