@@ -45,12 +45,12 @@ def get_language_options() -> list[LocaleInfo]:
     """Convert a list of supported locales to a list of language options."""
     language_options: list[LocaleInfo] = []
     for locale_line in get_supported_locales():
-        locale_code = locale_line.split(maxsplit=1)[0]
-        display_name = get_name_from_language_code(locale_code)
+        locale_code, encoding = locale_line.split(maxsplit=1)
 
-        if display_name in [option.display_name for option in language_options]:
+        if not encoding == "UTF-8":
             continue
 
+        display_name = get_name_from_language_code(locale_code)
         language_options.append(LocaleInfo(code=locale_code, display_name=display_name))
 
     return sorted(language_options, key=lambda option: option.display_name)
