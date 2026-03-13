@@ -13,8 +13,6 @@ class LocationPage(QWizardPage):
 
     The regions correspond to the directories in `/usr/share/zoneinfo`, and the timezones correspond to the files within
     those directories.
-
-    A symlink will be created: `ln -sf /usr/share/zoneinfo/{region}/{timezone} /etc/localtime`
     """
 
     def __init__(

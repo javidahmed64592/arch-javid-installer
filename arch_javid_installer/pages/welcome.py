@@ -12,12 +12,6 @@ class WelcomePage(QWizardPage):
 
     The language options are derived from the supported locales on the system, which are read from
     `/usr/share/i18n/SUPPORTED`.
-
-    The chosen locale gets uncommented in `/etc/locale.gen`, and `locale-gen` is run to generate the locale.
-    It also gets assigned to the following environment variables in `/etc/locale.conf`:
-
-    [`LANG`, `LC_ADDRESS`, `LC_IDENTIFICATION`, `LC_MEASUREMENT`, `LC_MONETARY`, `LC_NAME`, `LC_NUMERIC`, `LC_PAPER`,
-    `LC_TELEPHONE`, `LC_TIME`]
     """
 
     def __init__(self, title: str, language_options: dict[str, str], default_locale: str) -> None:
