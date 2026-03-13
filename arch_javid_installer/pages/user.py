@@ -74,38 +74,38 @@ class UserPage(QWizardPage):
         """Validate that all required fields are filled and passwords match."""
         # Check all fields are filled
         if not self.computer_name.text().strip():
-            QMessageBox.warning(self, "Validation Error", "Please enter a computer name.")
+            QMessageBox.warning(self, "Error", "Please enter a computer name.")
             return False
 
         if not self.username.text().strip():
-            QMessageBox.warning(self, "Validation Error", "Please enter a username.")
+            QMessageBox.warning(self, "Error", "Please enter a username.")
             return False
 
         if not self.password.text():
-            QMessageBox.warning(self, "Validation Error", "Please enter a password.")
+            QMessageBox.warning(self, "Error", "Please enter a password.")
             return False
 
         if not self.confirm_password.text():
-            QMessageBox.warning(self, "Validation Error", "Please confirm your password.")
+            QMessageBox.warning(self, "Error", "Please confirm your password.")
             return False
 
         # Check passwords match
         if self.password.text() != self.confirm_password.text():
-            QMessageBox.warning(self, "Validation Error", "Passwords do not match.")
+            QMessageBox.warning(self, "Error", "Passwords do not match.")
             return False
 
         # Check root password if not using same password
         if not self.root_same_password.isChecked():
             if not self.root_password.text():
-                QMessageBox.warning(self, "Validation Error", "Please enter a root password.")
+                QMessageBox.warning(self, "Error", "Please enter a root password.")
                 return False
 
             if not self.confirm_root_password.text():
-                QMessageBox.warning(self, "Validation Error", "Please confirm the root password.")
+                QMessageBox.warning(self, "Error", "Please confirm the root password.")
                 return False
 
             if self.root_password.text() != self.confirm_root_password.text():
-                QMessageBox.warning(self, "Validation Error", "Root passwords do not match.")
+                QMessageBox.warning(self, "Error", "Root passwords do not match.")
                 return False
 
         return True

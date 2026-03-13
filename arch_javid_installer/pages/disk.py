@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QHeaderView,
     QLabel,
+    QMessageBox,
     QRadioButton,
     QTreeWidget,
     QTreeWidgetItem,
@@ -172,6 +173,7 @@ class DiskPage(QWizardPage):
     def validatePage(self) -> bool:  # noqa: N802
         """Validate that a partition mode is selected."""
         if not any(button.isChecked() for button in self.partition_modes.values()):
+            QMessageBox.warning(self, "Error", "Please select a partitioning mode.")
             return False
         return True
 
