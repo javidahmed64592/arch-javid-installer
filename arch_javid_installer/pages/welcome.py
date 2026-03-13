@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWizardPage
 
-from arch_javid_installer.models import LanguageChoice
+from arch_javid_installer.models import LanguageChoice, LocaleInfo
 
 
 class WelcomePage(QWizardPage):
@@ -14,7 +14,7 @@ class WelcomePage(QWizardPage):
     `/usr/share/i18n/SUPPORTED`.
     """
 
-    def __init__(self, title: str, language_options: dict[str, str], default_locale: str) -> None:
+    def __init__(self, title: str, language_options: list[LocaleInfo], default_locale: str) -> None:
         """Initialize the welcome page."""
         super().__init__()
         self.setTitle(title)
@@ -33,10 +33,12 @@ class WelcomePage(QWizardPage):
         layout.addWidget(QLabel("Select your language:"))
         self.language_list = QComboBox()
 
-        for language in self._language_options.values():
-            self.language_list.addItem(language)
+        for locale_info in self._language_options:
+            self.language_list.addItem(locale_info.display_name)
 
-        default_index = list(self._language_options.keys()).index(self._default_locale)
+        default_index = next(
+            (i for i, locale in enumerate(self._language_options) if locale.code == self._default_locale), 0
+        )
         self.language_list.setCurrentIndex(default_index)
 
         layout.addWidget(self.language_list)
@@ -44,5 +46,5 @@ class WelcomePage(QWizardPage):
     def get_choice(self) -> LanguageChoice:
         """Get the selected language choice."""
         current_index = self.language_list.currentIndex()
-        selected_locale = list(self._language_options.keys())[current_index]
+        selected_locale = self._language_options[current_index]
         return LanguageChoice(locale=selected_locale)

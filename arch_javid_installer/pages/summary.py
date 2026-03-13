@@ -2,7 +2,6 @@
 
 from PySide6.QtWidgets import QLabel, QScrollArea, QVBoxLayout, QWizardPage
 
-from arch_javid_installer.helpers import get_name_from_language_code
 from arch_javid_installer.models import InstallationConfig, PagesEnum
 
 
@@ -71,7 +70,7 @@ class SummaryPage(QWizardPage):
         """Format the installation configuration as HTML for display."""
         html = "<html><body>"
         html += "<h3>Language & Location</h3>"
-        html += f"<p><b>Locale:</b> {get_name_from_language_code(config.language.locale)}</p>"
+        html += f"<p><b>Locale:</b> {config.language.locale.display_name}</p>"
         html += f"<p><b>Region:</b> {config.location.region.value}</p>"
         html += f"<p><b>Timezone:</b> {config.location.zone}</p>"
 

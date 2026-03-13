@@ -27,10 +27,17 @@ class PagesEnum(StrEnum):
 
 
 # Language model
+class LocaleInfo(BaseModel):
+    """Model for locale information."""
+
+    code: str = Field(..., description="The locale code (e.g., 'en_GB.UTF-8').")
+    display_name: str = Field(..., description="The display name of the locale (e.g., 'English (United Kingdom)').")
+
+
 class LanguageChoice(BaseModel):
     """Model for language choice."""
 
-    locale: str = Field(..., description="The locale code for the selected language (e.g., 'en_GB.UTF-8').")
+    locale: LocaleInfo = Field(..., description="The locale information for the selected language.")
 
 
 # Location models

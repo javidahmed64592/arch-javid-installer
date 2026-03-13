@@ -12,6 +12,7 @@ from arch_javid_installer.models import (
     KeyboardLayoutSectionMarkers,
     KeyboardModelName,
     KeyboardVariantName,
+    LocaleInfo,
     RegionOptions,
 )
 from arch_javid_installer.shell import (
@@ -39,10 +40,9 @@ def get_name_from_language_code(code: str) -> str:
         return display_name or locale_code
 
 
-def get_language_options() -> dict[str, str]:
+def get_language_options() -> list[LocaleInfo]:
     """Convert a list of supported locales to a list of language options."""
-    language_options: dict[str, str] = {}
-
+    language_options: list[LocaleInfo] = []
     for locale_line in get_supported_locales():
         if not locale_line.strip() or locale_line.startswith("#"):
             continue
@@ -50,12 +50,12 @@ def get_language_options() -> dict[str, str]:
         locale_code = locale_line.split(maxsplit=1)[0]
         display_name = get_name_from_language_code(locale_code)
 
-        if display_name in language_options.values():
+        if display_name in [option.display_name for option in language_options]:
             continue
 
-        language_options[locale_code] = display_name
+        language_options.append(LocaleInfo(code=locale_code, display_name=display_name))
 
-    return dict(sorted(language_options.items(), key=lambda item: item[1]))
+    return sorted(language_options, key=lambda option: option.display_name)
 
 
 def get_region_options() -> dict[RegionOptions, list[str]]:
