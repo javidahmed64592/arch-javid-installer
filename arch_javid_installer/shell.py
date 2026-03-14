@@ -9,6 +9,8 @@ KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
 
 ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
 
+LIST_BLOCKS_COMMAND = "lsblk -J -o NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"
+
 
 # General methods
 def list_directory_command(directory: str) -> list[str]:
@@ -36,8 +38,7 @@ def get_supported_locales() -> list[str]:
 
 def get_zones_for_region(region: RegionOptions) -> list[str]:
     """Get a list of timezones for a given region."""
-    directory = f"{ZONEINFO_DIRECTORY}/{region}"
-    result = run_command(list_directory_command(directory))
+    result = run_command(list_directory_command(f"{ZONEINFO_DIRECTORY}/{region}"))
     zones: list[str] = result.stdout.splitlines()
     return zones
 
@@ -51,6 +52,6 @@ def get_available_keyboard_layouts() -> list[str]:
 
 def get_disks_json() -> str:
     """Get a JSON string of available disks and their partitions."""
-    result = run_command(["lsblk", "-J", "-o", "NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"])
+    result = run_command(LIST_BLOCKS_COMMAND.split())
     disks: str = result.stdout
     return disks
