@@ -26,25 +26,25 @@ class UserPage(QWizardPage):
     def _add_computer_name_field(self, layout: QVBoxLayout) -> None:
         """Add the computer name field to the layout."""
         self.computer_name = QLineEdit()
-        layout.addWidget(QLabel("Computer Name"))
+        layout.addWidget(QLabel("Computer Name:"))
         layout.addWidget(self.computer_name)
 
     def _add_username_field(self, layout: QVBoxLayout) -> None:
         """Add the username field to the layout."""
         self.username = QLineEdit()
-        layout.addWidget(QLabel("Username"))
+        layout.addWidget(QLabel("Username:"))
         layout.addWidget(self.username)
 
     def _add_password_fields(self, layout: QVBoxLayout) -> None:
         """Add the password fields to the layout."""
         self.password = QLineEdit()
         self.password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Password"))
+        layout.addWidget(QLabel("Password:"))
         layout.addWidget(self.password)
 
         self.confirm_password = QLineEdit()
         self.confirm_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Confirm Password"))
+        layout.addWidget(QLabel("Confirm Password:"))
         layout.addWidget(self.confirm_password)
 
     def _add_root_password_radio_button(self, layout: QVBoxLayout) -> None:
@@ -57,12 +57,12 @@ class UserPage(QWizardPage):
         """Add the root password fields to the layout."""
         self.root_password = QLineEdit()
         self.root_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Root Password"))
+        layout.addWidget(QLabel("Root Password:"))
         layout.addWidget(self.root_password)
 
         self.confirm_root_password = QLineEdit()
         self.confirm_root_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Confirm Root Password"))
+        layout.addWidget(QLabel("Confirm Root Password:"))
         layout.addWidget(self.confirm_root_password)
 
     def _toggle_root_password_fields(self, checked: bool) -> None:  # noqa: FBT001
