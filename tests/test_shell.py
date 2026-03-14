@@ -59,7 +59,7 @@ class TestGeneralMethods:
         """Test that run_script calls run_command with the correct arguments."""
         script_type = ScriptType.SYSTEM
         script_name = "test_script.sh"
-        flags = "--flag1 --flag2"
+        flags = " ".join(["--input1 value1", "--input2 value2"])
 
         result = run_script(script_type, script_name, flags)
 
