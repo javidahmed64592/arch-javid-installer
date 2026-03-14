@@ -15,7 +15,7 @@ class UserPage(QWizardPage):
 
         layout = QVBoxLayout()
 
-        self._add_computer_name_field(layout)
+        self._add_hostname_field(layout)
         self._add_username_field(layout)
         self._add_password_fields(layout)
         self._add_root_password_radio_button(layout)
@@ -23,11 +23,11 @@ class UserPage(QWizardPage):
 
         self.setLayout(layout)
 
-    def _add_computer_name_field(self, layout: QVBoxLayout) -> None:
+    def _add_hostname_field(self, layout: QVBoxLayout) -> None:
         """Add the computer name field to the layout."""
-        self.computer_name = QLineEdit()
+        self.hostname = QLineEdit()
         layout.addWidget(QLabel("Computer Name:"))
-        layout.addWidget(self.computer_name)
+        layout.addWidget(self.hostname)
 
     def _add_username_field(self, layout: QVBoxLayout) -> None:
         """Add the username field to the layout."""
@@ -73,7 +73,7 @@ class UserPage(QWizardPage):
     def validatePage(self) -> bool:  # noqa: N802, PLR0911
         """Validate that all required fields are filled and passwords match."""
         # Check all fields are filled
-        if not self.computer_name.text().strip():
+        if not self.hostname.text().strip():
             QMessageBox.warning(self, "Error", "Please enter a computer name.")
             return False
 
@@ -115,7 +115,7 @@ class UserPage(QWizardPage):
         root_password = self.password.text() if self.root_same_password.isChecked() else self.root_password.text()
 
         return UserChoice(
-            computer_name=self.computer_name.text().strip(),
+            hostname=self.hostname.text().strip(),
             username=self.username.text().strip(),
             password=self.password.text(),
             root_password=root_password,
