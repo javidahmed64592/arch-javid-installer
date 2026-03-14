@@ -112,7 +112,6 @@ class DiskPage(QWizardPage):
         layout.addWidget(QLabel("Partitioning Mode:"))
         self.partition_modes = {
             PartitionMode.ERASE: QRadioButton("Erase disk"),
-            PartitionMode.ALONGSIDE: QRadioButton("Install alongside existing OS"),
         }
 
         for button in self.partition_modes.values():
