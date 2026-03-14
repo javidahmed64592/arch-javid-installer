@@ -44,11 +44,11 @@ class SummaryPage(QWizardPage):
         disk_page = wizard.page(PagesEnum.DISK.page_id)
         user_page = wizard.page(PagesEnum.USER.page_id)
 
-        language_choice = welcome_page.get_choice()
-        location_choice = location_page.get_choice()
-        keyboard_choice = keyboard_page.get_choice()
-        disk_choice = disk_page.get_choice()
-        user_choice = user_page.get_choice()
+        language_choice = welcome_page.get_choice()  # type: ignore[attr-defined]
+        location_choice = location_page.get_choice()  # type: ignore[attr-defined]
+        keyboard_choice = keyboard_page.get_choice()  # type: ignore[attr-defined]
+        disk_choice = disk_page.get_choice()  # type: ignore[attr-defined]
+        user_choice = user_page.get_choice()  # type: ignore[attr-defined]
 
         # Create the configuration
         config = InstallationConfig(
@@ -60,7 +60,7 @@ class SummaryPage(QWizardPage):
         )
 
         # Store the configuration in the wizard for later use
-        wizard.installation_config = config
+        wizard.installation_config = config  # type: ignore[attr-defined]
 
         # Format the summary
         summary_text = self._format_summary(config)
