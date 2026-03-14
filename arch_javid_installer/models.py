@@ -138,7 +138,6 @@ class PartitionMode(StrEnum):
     """Enum for partitioning modes."""
 
     ERASE = auto()
-    MANUAL = auto()
     ALONGSIDE = auto()
 
 
@@ -153,7 +152,7 @@ class DiskChoice(BaseModel):
 class UserChoice(BaseModel):
     """Model for user choice."""
 
-    computer_name: str = Field(..., description="The name of the computer.")
+    hostname: str = Field(..., description="The name of the computer.")
     username: str = Field(..., description="The name of the user.")
     password: str = Field(..., description="The password for the user.")
     root_password: str = Field(..., description="The password for the root user.")

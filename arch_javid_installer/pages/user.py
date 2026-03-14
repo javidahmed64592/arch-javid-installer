@@ -8,14 +8,15 @@ from arch_javid_installer.models import UserChoice
 class UserPage(QWizardPage):
     """User page of the installer."""
 
-    def __init__(self, title: str) -> None:
+    def __init__(self, title: str, default_hostname: str) -> None:
         """Initialize the user page."""
         super().__init__()
         self.setTitle(title)
+        self._default_hostname = default_hostname
 
         layout = QVBoxLayout()
 
-        self._add_computer_name_field(layout)
+        self._add_hostname_field(layout)
         self._add_username_field(layout)
         self._add_password_fields(layout)
         self._add_root_password_radio_button(layout)
@@ -23,46 +24,50 @@ class UserPage(QWizardPage):
 
         self.setLayout(layout)
 
-    def _add_computer_name_field(self, layout: QVBoxLayout) -> None:
+    def _add_hostname_field(self, layout: QVBoxLayout) -> None:
         """Add the computer name field to the layout."""
-        self.computer_name = QLineEdit()
-        layout.addWidget(QLabel("Computer Name"))
-        layout.addWidget(self.computer_name)
+        self.hostname = QLineEdit()
+        self.hostname.setText(self._default_hostname)
+        layout.addWidget(QLabel("Computer Name:"))
+        layout.addWidget(self.hostname)
 
     def _add_username_field(self, layout: QVBoxLayout) -> None:
         """Add the username field to the layout."""
         self.username = QLineEdit()
-        layout.addWidget(QLabel("Username"))
+        layout.addWidget(QLabel("Username:"))
         layout.addWidget(self.username)
 
     def _add_password_fields(self, layout: QVBoxLayout) -> None:
         """Add the password fields to the layout."""
         self.password = QLineEdit()
         self.password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Password"))
+        layout.addWidget(QLabel("Password:"))
         layout.addWidget(self.password)
 
         self.confirm_password = QLineEdit()
         self.confirm_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Confirm Password"))
+        layout.addWidget(QLabel("Confirm Password:"))
         layout.addWidget(self.confirm_password)
 
     def _add_root_password_radio_button(self, layout: QVBoxLayout) -> None:
         """Add the root password radio button to the layout."""
         self.root_same_password = QRadioButton("Use the same password for the root user.")
+        self.root_same_password.setChecked(True)
         layout.addWidget(self.root_same_password)
         self.root_same_password.toggled.connect(self._toggle_root_password_fields)
 
     def _add_root_password_fields(self, layout: QVBoxLayout) -> None:
         """Add the root password fields to the layout."""
         self.root_password = QLineEdit()
+        self.root_password.setEnabled(False)
         self.root_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Root Password"))
+        layout.addWidget(QLabel("Root Password:"))
         layout.addWidget(self.root_password)
 
         self.confirm_root_password = QLineEdit()
+        self.confirm_root_password.setEnabled(False)
         self.confirm_root_password.setEchoMode(QLineEdit.EchoMode.Password)
-        layout.addWidget(QLabel("Confirm Root Password"))
+        layout.addWidget(QLabel("Confirm Root Password:"))
         layout.addWidget(self.confirm_root_password)
 
     def _toggle_root_password_fields(self, checked: bool) -> None:  # noqa: FBT001
@@ -73,7 +78,7 @@ class UserPage(QWizardPage):
     def validatePage(self) -> bool:  # noqa: N802, PLR0911
         """Validate that all required fields are filled and passwords match."""
         # Check all fields are filled
-        if not self.computer_name.text().strip():
+        if not self.hostname.text().strip():
             QMessageBox.warning(self, "Error", "Please enter a computer name.")
             return False
 
@@ -115,7 +120,7 @@ class UserPage(QWizardPage):
         root_password = self.password.text() if self.root_same_password.isChecked() else self.root_password.text()
 
         return UserChoice(
-            computer_name=self.computer_name.text().strip(),
+            hostname=self.hostname.text().strip(),
             username=self.username.text().strip(),
             password=self.password.text(),
             root_password=root_password,
