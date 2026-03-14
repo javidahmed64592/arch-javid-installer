@@ -61,8 +61,8 @@ class TestRegionHelpers:
             region_options = get_region_options()
             assert len(region_options) == len(mock_zones_for_region)
             for region_info in region_options:
-                assert region_info.region.value in mock_zones_for_region
-                assert region_info.zones == mock_zones_for_region[region_info.region.value]
+                assert region_info.region in mock_zones_for_region
+                assert region_info.zones == mock_zones_for_region[region_info.region]
 
 
 class TestKeyboardHelpers:
