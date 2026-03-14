@@ -8,10 +8,11 @@ from arch_javid_installer.models import UserChoice
 class UserPage(QWizardPage):
     """User page of the installer."""
 
-    def __init__(self, title: str) -> None:
+    def __init__(self, title: str, default_hostname: str) -> None:
         """Initialize the user page."""
         super().__init__()
         self.setTitle(title)
+        self._default_hostname = default_hostname
 
         layout = QVBoxLayout()
 
@@ -26,6 +27,7 @@ class UserPage(QWizardPage):
     def _add_hostname_field(self, layout: QVBoxLayout) -> None:
         """Add the computer name field to the layout."""
         self.hostname = QLineEdit()
+        self.hostname.setText(self._default_hostname)
         layout.addWidget(QLabel("Computer Name:"))
         layout.addWidget(self.hostname)
 
@@ -50,17 +52,20 @@ class UserPage(QWizardPage):
     def _add_root_password_radio_button(self, layout: QVBoxLayout) -> None:
         """Add the root password radio button to the layout."""
         self.root_same_password = QRadioButton("Use the same password for the root user.")
+        self.root_same_password.setChecked(True)
         layout.addWidget(self.root_same_password)
         self.root_same_password.toggled.connect(self._toggle_root_password_fields)
 
     def _add_root_password_fields(self, layout: QVBoxLayout) -> None:
         """Add the root password fields to the layout."""
         self.root_password = QLineEdit()
+        self.root_password.setEnabled(False)
         self.root_password.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(QLabel("Root Password:"))
         layout.addWidget(self.root_password)
 
         self.confirm_root_password = QLineEdit()
+        self.confirm_root_password.setEnabled(False)
         self.confirm_root_password.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addWidget(QLabel("Confirm Root Password:"))
         layout.addWidget(self.confirm_root_password)

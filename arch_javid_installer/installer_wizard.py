@@ -68,6 +68,7 @@ class InstallerWizard(QWizard):
             ),
             PagesEnum.USER: UserPage(
                 title="User Account",
+                default_hostname="arch-javid",
             ),
             PagesEnum.SUMMARY: SummaryPage(
                 title="Summary",
