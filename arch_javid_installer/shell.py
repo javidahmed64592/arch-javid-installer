@@ -1,9 +1,28 @@
 """Shell commands for the installer to use."""
 
 import subprocess
+from enum import StrEnum
+
+from pyhere import here
 
 from arch_javid_installer.models import RegionOptions
 
+# Constants
+SCRIPTS_DIRECTORY = here() / "scripts"
+
+
+class ScriptType(StrEnum):
+    """Subdirectory names for different types of scripts."""
+
+    CHROOT = "chroot"
+    SYSTEM = "system"
+
+    def get_script_path(self, script_name: str) -> str:
+        """Get the full path to a script of this type."""
+        return str(SCRIPTS_DIRECTORY / self.value / script_name)
+
+
+# Resource filepaths and command templates
 SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
 KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
 
@@ -26,6 +45,12 @@ def read_file_command(filepath: str) -> list[str]:
 def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
     return subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+
+
+def run_script(script_type: ScriptType, script_name: str, flags: str) -> subprocess.CompletedProcess:
+    """Run a script of the given type and name."""
+    script_path = script_type.get_script_path(script_name)
+    return run_command(["bash", script_path, *flags.split()])
 
 
 # Pre-installation methods

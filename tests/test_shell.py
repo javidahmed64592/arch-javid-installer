@@ -11,6 +11,7 @@ from arch_javid_installer.shell import (
     LIST_BLOCKS_COMMAND,
     SUPPORTED_LOCALES_FILEPATH,
     ZONEINFO_DIRECTORY,
+    ScriptType,
     get_available_keyboard_layouts,
     get_disks_json,
     get_supported_locales,
@@ -18,6 +19,7 @@ from arch_javid_installer.shell import (
     list_directory_command,
     read_file_command,
     run_command,
+    run_script,
 )
 
 
@@ -52,6 +54,17 @@ class TestGeneralMethods:
 
         mock_run.assert_called_once_with(command, check=True, capture_output=True, text=True)
         assert result.stdout == mock_run.return_value.stdout
+
+    def test_run_script(self, mock_run_command: MagicMock) -> None:
+        """Test that run_script calls run_command with the correct arguments."""
+        script_type = ScriptType.SYSTEM
+        script_name = "test_script.sh"
+        flags = "--flag1 --flag2"
+
+        result = run_script(script_type, script_name, flags)
+
+        mock_run_command.assert_called_once_with(["bash", script_type.get_script_path(script_name), *flags.split()])
+        assert result == mock_run_command.return_value
 
 
 class TestPreInstallationMethods:
