@@ -20,10 +20,10 @@ class PagesEnum(StrEnum):
     INSTALL = auto()
     FINISH = auto()
 
-    @classmethod
-    def page_id(cls, page: PagesEnum) -> int:
+    @property
+    def page_id(self) -> int:
         """Get the page ID for a given page enum."""
-        return list(cls).index(page)
+        return list(PagesEnum).index(self)
 
 
 # Language model

@@ -81,4 +81,4 @@ class InstallerWizard(QWizard):
         }
 
         for page_enum, page in self.pages.items():
-            self.setPage(PagesEnum.page_id(page_enum), page)
+            self.setPage(page_enum.page_id, page)

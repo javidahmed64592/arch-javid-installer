@@ -38,11 +38,11 @@ class SummaryPage(QWizardPage):
         # Get the wizard and collect choices from all pages
         wizard = self.wizard()
 
-        welcome_page = wizard.page(PagesEnum.page_id(PagesEnum.WELCOME))
-        location_page = wizard.page(PagesEnum.page_id(PagesEnum.LOCATION))
-        keyboard_page = wizard.page(PagesEnum.page_id(PagesEnum.KEYBOARD))
-        disk_page = wizard.page(PagesEnum.page_id(PagesEnum.DISK))
-        user_page = wizard.page(PagesEnum.page_id(PagesEnum.USER))
+        welcome_page = wizard.page(PagesEnum.WELCOME.page_id)
+        location_page = wizard.page(PagesEnum.LOCATION.page_id)
+        keyboard_page = wizard.page(PagesEnum.KEYBOARD.page_id)
+        disk_page = wizard.page(PagesEnum.DISK.page_id)
+        user_page = wizard.page(PagesEnum.USER.page_id)
 
         language_choice = welcome_page.get_choice()
         location_choice = location_page.get_choice()
