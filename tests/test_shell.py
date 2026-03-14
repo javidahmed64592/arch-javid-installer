@@ -55,15 +55,23 @@ class TestGeneralMethods:
         mock_run.assert_called_once_with(command, check=True, capture_output=True, text=True)
         assert result.stdout == mock_run.return_value.stdout
 
-    def test_run_script(self, mock_run_command: MagicMock) -> None:
+    @pytest.mark.parametrize(
+        ("script_type", "expected_prefix"),
+        [
+            (ScriptType.CHROOT, ["arch-chroot", "/mnt"]),
+            (ScriptType.SYSTEM, ["/bin/bash"]),
+        ],
+    )
+    def test_run_script(self, script_type: ScriptType, expected_prefix: list[str], mock_run_command: MagicMock) -> None:
         """Test that run_script calls run_command with the correct arguments."""
-        script_type = ScriptType.SYSTEM
         script_name = "test_script.sh"
         flags = " ".join(["--input1 value1", "--input2 value2"])
 
         result = run_script(script_type, script_name, flags)
 
-        mock_run_command.assert_called_once_with(["bash", script_type.get_script_path(script_name), *flags.split()])
+        mock_run_command.assert_called_once_with(
+            [*expected_prefix, script_type.get_script_path(script_name), *flags.split()]
+        )
         assert result == mock_run_command.return_value
 
 

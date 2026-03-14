@@ -17,6 +17,15 @@ class ScriptType(StrEnum):
     CHROOT = "chroot"
     SYSTEM = "system"
 
+    @property
+    def command_prefix(self) -> list[str]:
+        """Get the command prefix for this script type."""
+        match self:
+            case ScriptType.CHROOT:
+                return ["arch-chroot", "/mnt"]
+            case ScriptType.SYSTEM:
+                return ["/bin/bash"]
+
     def get_script_path(self, script_name: str) -> str:
         """Get the full path to a script of this type."""
         return str(SCRIPTS_DIRECTORY / self.value / script_name)
@@ -50,7 +59,7 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
 def run_script(script_type: ScriptType, script_name: str, flags: str) -> subprocess.CompletedProcess:
     """Run a script of the given type and name."""
     script_path = script_type.get_script_path(script_name)
-    return run_command(["bash", script_path, *flags.split()])
+    return run_command([*script_type.command_prefix, script_path, *flags.split()])
 
 
 # Pre-installation methods
