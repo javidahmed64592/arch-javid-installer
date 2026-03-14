@@ -138,7 +138,6 @@ class PartitionMode(StrEnum):
     """Enum for partitioning modes."""
 
     ERASE = auto()
-    MANUAL = auto()
     ALONGSIDE = auto()
 
 
