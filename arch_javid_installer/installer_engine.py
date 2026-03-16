@@ -46,16 +46,15 @@ class InstallerEngine:
         scripts = SCRIPTS[script_type]
 
         _disk = self.config.disk
-        _efi_size = self.EFI_SIZE_MB
-        _efi_part = f"{self.config.disk}1"
-        _root_part = f"{self.config.disk}2"
+        _efi_part = f"{_disk}1"
+        _root_part = f"{_disk}2"
 
         run_script(
             script_type=script_type,
             script_name=scripts["partition"],
             flags=[
                 f"--disk {_disk}",
-                f"--efi-size {_efi_size}",
+                f"--efi-size {self.EFI_SIZE_MB}",
             ],
         )
 
