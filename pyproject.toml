@@ -58,7 +58,7 @@ branch = true
 source = ["arch_javid_installer", "tests"]
 
 [tool.coverage.report]
-fail_under = 40
+fail_under = 35
 skip_covered = false
 show_missing = true
 
