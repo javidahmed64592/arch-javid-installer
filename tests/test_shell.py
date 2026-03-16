@@ -17,6 +17,7 @@ from arch_javid_installer.shell import (
     get_supported_locales,
     get_zones_for_region,
     list_directory_command,
+    make_scripts_executable,
     read_file_command,
     run_command,
     run_script,
@@ -65,13 +66,11 @@ class TestGeneralMethods:
     def test_run_script(self, script_type: ScriptType, expected_prefix: list[str], mock_run_command: MagicMock) -> None:
         """Test that run_script calls run_command with the correct arguments."""
         script_name = "test_script.sh"
-        flags = " ".join(["--input1 value1", "--input2 value2"])
+        flags = ["--input1", "value1", "--input2", "value2"]
 
         result = run_script(script_type, script_name, flags)
 
-        mock_run_command.assert_called_once_with(
-            [*expected_prefix, script_type.get_script_path(script_name), *flags.split()]
-        )
+        mock_run_command.assert_called_once_with([*expected_prefix, script_type.get_script_path(script_name), *flags])
         assert result == mock_run_command.return_value
 
 
@@ -98,3 +97,13 @@ class TestPreInstallationMethods:
         """Test that get_disks_json returns a JSON string of available disks."""
         assert get_disks_json() == mock_run_command.return_value.stdout
         mock_run_command.assert_called_once_with(LIST_BLOCKS_COMMAND.split())
+
+
+class TestInstallationMethods:
+    """Tests for the installation shell command methods."""
+
+    def test_make_scripts_executable(self, mock_run_command: MagicMock) -> None:
+        """Test that make_scripts_executable calls run_command with the correct arguments."""
+        script_type = ScriptType.CHROOT
+        make_scripts_executable(script_type)
+        mock_run_command.assert_called_once_with(["chmod", "+x", f"{script_type.script_directory}/*.sh"])

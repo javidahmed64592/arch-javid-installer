@@ -2,6 +2,7 @@
 
 import subprocess
 from enum import StrEnum
+from pathlib import Path
 
 from pyhere import here
 
@@ -26,9 +27,14 @@ class ScriptType(StrEnum):
             case ScriptType.SYSTEM:
                 return ["/bin/bash"]
 
+    @property
+    def script_directory(self) -> Path:
+        """Get the directory name for this script type."""
+        return SCRIPTS_DIRECTORY / self.value
+
     def get_script_path(self, script_name: str) -> str:
         """Get the full path to a script of this type."""
-        return str(SCRIPTS_DIRECTORY / self.value / script_name)
+        return str(self.script_directory / script_name)
 
 
 # Resource filepaths and command templates
@@ -56,10 +62,10 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
     return subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
 
 
-def run_script(script_type: ScriptType, script_name: str, flags: str) -> subprocess.CompletedProcess:
+def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> subprocess.CompletedProcess:
     """Run a script of the given type and name."""
     script_path = script_type.get_script_path(script_name)
-    return run_command([*script_type.command_prefix, script_path, *flags.split()])
+    return run_command([*script_type.command_prefix, script_path, *flags])
 
 
 # Pre-installation methods
@@ -89,3 +95,9 @@ def get_disks_json() -> str:
     result = run_command(LIST_BLOCKS_COMMAND.split())
     disks: str = result.stdout
     return disks
+
+
+# Installation methods
+def make_scripts_executable(script_type: ScriptType) -> None:
+    """Make all scripts of the given type executable."""
+    run_command(["chmod", "+x", f"{script_type.script_directory}/*.sh"])
