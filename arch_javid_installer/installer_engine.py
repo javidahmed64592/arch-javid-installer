@@ -1,5 +1,7 @@
 """Orchestrator for the installer scripts."""
 
+from PySide6.QtCore import QObject, Signal
+
 from arch_javid_installer.models import InstallationConfig
 from arch_javid_installer.shell import ScriptType, make_scripts_executable, run_script
 
@@ -24,19 +26,37 @@ SCRIPTS = {
 }
 
 
-class InstallerEngine:
+class InstallerEngine(QObject):
     """Orchestrator for the installer scripts."""
+
+    # Signals for progress tracking
+    progress_updated = Signal(int)  # Emits progress percentage (0-100)
+    log_message = Signal(str)  # Emits log messages for display
+    installation_complete = Signal(bool)  # Emits True on success, False on failure
 
     EFI_SIZE_MB = 2048
     PACMAN_CONF_FILEPATH = "/etc/pacman.conf"
     PACKAGES_FILEPATH = "/root/packages.txt"
 
+    # Total number of installation steps for progress calculation
+    TOTAL_STEPS = 13
+
     def __init__(self, config: InstallationConfig) -> None:
         """Initialize the installer engine with the given configuration."""
+        super().__init__()
         self.config = config
+        self.current_step = 0
+
+    def _update_progress(self, message: str) -> None:
+        """Update progress and emit signals."""
+        self.current_step += 1
+        progress = int((self.current_step / self.TOTAL_STEPS) * 100)
+        self.progress_updated.emit(progress)
+        self.log_message.emit(message)
 
     def make_scripts_executable(self) -> None:
         """Make all scripts executable."""
+        self.log_message.emit("Making scripts executable...")
         for script_type in ScriptType:
             make_scripts_executable(script_type)
 
@@ -45,10 +65,11 @@ class InstallerEngine:
         script_type = ScriptType.SYSTEM
         scripts = SCRIPTS[script_type]
 
-        _disk = self.config.disk
+        _disk = self.config.disk.disk_to_use.name
         _efi_part = f"{_disk}1"
         _root_part = f"{_disk}2"
 
+        self._update_progress("Partitioning disk...")
         run_script(
             script_type=script_type,
             script_name=scripts["partition"],
@@ -58,6 +79,7 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Creating filesystems...")
         run_script(
             script_type=script_type,
             script_name=scripts["makefs"],
@@ -67,6 +89,7 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Mounting partitions...")
         run_script(
             script_type=script_type,
             script_name=scripts["mount"],
@@ -76,6 +99,7 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Installing base system packages...")
         run_script(
             script_type=script_type,
             script_name=scripts["base"],
@@ -85,8 +109,10 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Generating fstab...")
         run_script(script_type=script_type, script_name=scripts["fstab"], flags=[])
 
+        self._update_progress("Preparing chroot environment...")
         run_script(
             script_type=script_type,
             script_name=scripts["chroot"],
@@ -100,6 +126,7 @@ class InstallerEngine:
         script_type = ScriptType.CHROOT
         scripts = SCRIPTS[script_type]
 
+        self._update_progress("Configuring locale and timezone...")
         run_script(
             script_type=script_type,
             script_name=scripts["locale"],
@@ -110,6 +137,7 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Configuring keyboard layout...")
         run_script(
             script_type=script_type,
             script_name=scripts["keyboard"],
@@ -120,6 +148,7 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Creating user accounts...")
         run_script(
             script_type=script_type,
             script_name=scripts["users"],
@@ -131,13 +160,31 @@ class InstallerEngine:
             ],
         )
 
+        self._update_progress("Enabling system services...")
         run_script(script_type=script_type, script_name=scripts["services"], flags=[])
+
+        self._update_progress("Installing NVIDIA drivers...")
         run_script(script_type=script_type, script_name=scripts["nvidia"], flags=[])
+
+        self._update_progress("Installing bootloader...")
         run_script(script_type=script_type, script_name=scripts["bootloader"], flags=[])
 
     def run(self) -> None:
         """Run the installer engine."""
-        self.make_scripts_executable()
-        self.run_system_scripts()
-        self.run_chroot_scripts()
-        run_script(script_type=ScriptType.SYSTEM, script_name=SCRIPTS[ScriptType.SYSTEM]["unmount"], flags=[])
+        try:
+            self.current_step = 0
+            self.log_message.emit("Starting installation...")
+
+            self.make_scripts_executable()
+            self.run_system_scripts()
+            self.run_chroot_scripts()
+
+            self._update_progress("Unmounting partitions...")
+            run_script(script_type=ScriptType.SYSTEM, script_name=SCRIPTS[ScriptType.SYSTEM]["unmount"], flags=[])
+
+            self.log_message.emit("Installation completed successfully!")
+            self.progress_updated.emit(100)
+            self.installation_complete.emit(True)  # noqa: FBT003
+        except Exception as e:
+            self.log_message.emit(f"Installation failed: {e!s}")
+            self.installation_complete.emit(False)  # noqa: FBT003
