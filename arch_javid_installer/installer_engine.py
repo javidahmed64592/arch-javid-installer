@@ -85,7 +85,7 @@ class InstallerEngine:
             ],
         )
 
-        run_script(script_type=script_type, script_name=scripts["fstab"])
+        run_script(script_type=script_type, script_name=scripts["fstab"], flags=[])
 
         run_script(
             script_type=script_type,
@@ -131,13 +131,13 @@ class InstallerEngine:
             ],
         )
 
-        run_script(script_type=script_type, script_name=scripts["services"])
-        run_script(script_type=script_type, script_name=scripts["nvidia"])
-        run_script(script_type=script_type, script_name=scripts["bootloader"])
+        run_script(script_type=script_type, script_name=scripts["services"], flags=[])
+        run_script(script_type=script_type, script_name=scripts["nvidia"], flags=[])
+        run_script(script_type=script_type, script_name=scripts["bootloader"], flags=[])
 
     def run(self) -> None:
         """Run the installer engine."""
         self.make_scripts_executable()
         self.run_system_scripts()
         self.run_chroot_scripts()
-        run_script(script_type=ScriptType.SYSTEM, script_name=SCRIPTS[ScriptType.SYSTEM]["unmount"])
+        run_script(script_type=ScriptType.SYSTEM, script_name=SCRIPTS[ScriptType.SYSTEM]["unmount"], flags=[])

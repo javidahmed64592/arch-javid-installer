@@ -30,7 +30,7 @@ class ScriptType(StrEnum):
     @property
     def script_directory(self) -> Path:
         """Get the directory name for this script type."""
-        return SCRIPTS_DIRECTORY / self.value
+        return Path(SCRIPTS_DIRECTORY / self.value)
 
     def get_script_path(self, script_name: str) -> str:
         """Get the full path to a script of this type."""
