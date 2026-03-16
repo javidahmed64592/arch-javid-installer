@@ -24,10 +24,20 @@ if [[ -z "$HOSTNAME" || -z "$USERNAME" || -z "$PASSWORD" || -z "$ROOT_PASSWORD" 
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --hostname $HOSTNAME --username $USERNAME"
 
+# Set hostname
+echo "Setting hostname..."
 echo ${HOSTNAME} > /etc/hostname
+
+# Configure sudoers and set root password
+echo "Configuring sudoers and setting root password..."
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 echo "root:${ROOT_PASSWORD}" | chpasswd
 
+# Create user and set password
+echo "Creating user and setting password..."
 useradd -m -G wheel -s /bin/bash ${USERNAME}
 echo "${USERNAME}:${PASSWORD}" | chpasswd

@@ -20,18 +20,28 @@ if [[ -z "$EFI_SIZE" || -z "$DISK" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --disk $DISK --efi-size $EFI_SIZE"
+
 # Calculate partition start/end in MiB
 EFI_START=1
 EFI_END=$((EFI_START + EFI_SIZE))
 ROOT_START=$EFI_END
 ROOT_END=100%
+echo "Calculated partition layout:"
+echo "EFI partition: ${DISK}1, ${EFI_START}MiB - ${EFI_END}MiB"
+echo "Root partition: ${DISK}2, ${ROOT_START}MiB - ${ROOT_END}"
 
 # Create GPT partition table and partitions
+echo "Creating GPT partition table..."
 parted $DISK --script mklabel gpt --force
 
 # EFI system partition
+echo "Creating EFI system partition..."
 parted $DISK --script mkpart primary fat32 ${EFI_START}MiB ${EFI_END}MiB
 parted $DISK --script set 1 esp on
 
 # Root partition
+echo "Creating root partition..."
 parted $DISK --script mkpart primary btrfs ${ROOT_START}MiB ${ROOT_END}

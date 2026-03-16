@@ -18,9 +18,16 @@ if [[ -z "$ROOT_PART" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --root-part $ROOT_PART"
+
 # Create bootloader entry
+echo "Creating bootloader entry for root partition..."
 mkdir -p /boot/loader/entries
+
 ROOT_UUID=$(blkid -s UUID -o value ${ROOT_PART})
+echo "Root partition UUID: $ROOT_UUID"
 cat <<EOL > /boot/loader/entries/arch.conf
 title   Arch Javid
 linux   /vmlinuz-linux
@@ -30,6 +37,7 @@ options root=UUID=${ROOT_UUID} rw nvidia-drm.modeset=1 nvidia_drm.fbdev=1 quiet 
 EOL
 
 # Configure loader
+echo "Configuring systemd-boot..."
 cat <<EOL > /boot/loader/loader.conf
 default arch.conf
 timeout 3
@@ -37,4 +45,6 @@ editor no
 console-mode keep
 EOL
 
+# Install bootloader
+echo "Installing systemd-boot..."
 bootctl install

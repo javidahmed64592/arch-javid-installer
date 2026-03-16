@@ -22,4 +22,10 @@ if [[ -z "$MODEL" || -z "$LAYOUT" || -z "$VARIANT" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --model $MODEL --layout $LAYOUT --variant $VARIANT"
+
+# Set keyboard layout
+echo "Setting keyboard layout..."
 localectl set-x11-keymap ${LAYOUT} ${MODEL} ${VARIANT}

@@ -20,6 +20,13 @@ if [[ -z "$EFI_PART" || -z "$ROOT_PART" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --efi-part $EFI_PART --root-part $ROOT_PART"
+
 # Make filesystems
+echo "Creating FAT32 filesystem on EFI partition..."
 mkfs.fat -F32 $EFI_PART
+
+echo "Creating Btrfs filesystem on root partition..."
 mkfs.btrfs $ROOT_PART

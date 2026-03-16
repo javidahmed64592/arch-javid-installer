@@ -18,5 +18,11 @@ if [[ -z "$SCRIPT_DIRECTORY" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --script-directory $SCRIPT_DIRECTORY"
+
+# Copy chroot scripts to mounted root partition
+echo "Copying chroot scripts to mounted root partition..."
 mkdir -p /mnt${SCRIPT_DIRECTORY}
 cp "${SCRIPT_DIRECTORY}/"*.sh /mnt${SCRIPT_DIRECTORY}/

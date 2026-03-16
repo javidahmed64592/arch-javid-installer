@@ -20,7 +20,14 @@ if [[ -z "$EFI_PART" || -z "$ROOT_PART" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --efi-part $EFI_PART --root-part $ROOT_PART"
+
 # Mount partitions
+echo "Mounting root partition..."
 mount $ROOT_PART /mnt
+
+echo "Mounting EFI partition..."
 mkdir /mnt/boot
 mount $EFI_PART /mnt/boot

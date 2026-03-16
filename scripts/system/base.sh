@@ -20,8 +20,16 @@ if [[ -z "$PACMAN_CONF_FILEPATH" || -z "$PACKAGES_FILEPATH" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --pacman-conf $PACMAN_CONF_FILEPATH --packages $PACKAGES_FILEPATH"
+
+# Enable multilib repository and update package database
+echo "Enabling multilib repository..."
 sed -i '/^#\[multilib\]/{s/^#//;n;s/^#//}' "$PACMAN_CONF_FILEPATH"
 pacman -Sy --noconfirm
 
+# Install packages
+echo "Installing packages..."
 PACKAGES=$(grep -v '^\s*#' "$PACKAGES_FILEPATH" | grep -v '^\s*$' | tr '\n' ' ')
 pacstrap /mnt $PACKAGES

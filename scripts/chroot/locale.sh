@@ -22,9 +22,17 @@ if [[ -z "$LOCALE" || -z "$REGION" || -z "$ZONE" ]]; then
   exit 1
 fi
 
+# Script
+echo "Running script: $0"
+echo "Args: --locale $LOCALE --region $REGION --zone $ZONE"
+
+# Set timezone
+echo "Setting timezone..."
 ln -sf /usr/share/zoneinfo/${REGION}/${ZONE} /etc/localtime
 hwclock --systohc
 
+# Set locale
+echo "Setting locale..."
 sed -i "s/^#${LOCALE}/${LOCALE}/" /etc/locale.gen
 locale-gen
 echo "LANG=${LOCALE}" > /etc/locale.conf
