@@ -41,8 +41,7 @@ allow-direct-references = true
 [tool.hatch.build]
 include = [
   "arch_javid_installer/**",
-  "scripts/**",
-  ".here"
+  "scripts/**"
 ]
 
 [tool.pytest.ini_options]
