@@ -3,13 +3,12 @@
 import subprocess
 from enum import StrEnum
 from pathlib import Path
-
-from pyhere import here
+from site import getsitepackages
 
 from arch_javid_installer.models import RegionOptions
 
 # Constants
-SCRIPTS_DIRECTORY = here() / "scripts"
+SCRIPTS_DIRECTORY = Path(getsitepackages()[0]) / "scripts"
 
 
 class ScriptType(StrEnum):
