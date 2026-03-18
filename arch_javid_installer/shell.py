@@ -58,7 +58,15 @@ def read_file_command(filepath: str) -> list[str]:
 
 def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
-    return subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+    try:
+        return subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+    except subprocess.CalledProcessError as e:
+        error_msg = f"Command failed with exit code {e.returncode}\n"
+        if e.stdout:
+            error_msg += f"STDOUT:\n{e.stdout}\n"
+        if e.stderr:
+            error_msg += f"STDERR:\n{e.stderr}"
+        raise RuntimeError(error_msg) from e
 
 
 def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> subprocess.CompletedProcess:

@@ -186,5 +186,5 @@ class InstallerEngine(QObject):
             self.progress_updated.emit(100)
             self.installation_complete.emit(True)  # noqa: FBT003
         except Exception as e:
-            self.log_message.emit(f"Installation failed: {e!s}")
+            self.log_message.emit(f"Installation failed:\n{e!s}")
             self.installation_complete.emit(False)  # noqa: FBT003
