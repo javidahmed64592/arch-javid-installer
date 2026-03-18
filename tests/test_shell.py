@@ -106,4 +106,13 @@ class TestInstallationMethods:
         """Test that make_scripts_executable calls run_command with the correct arguments."""
         script_type = ScriptType.CHROOT
         make_scripts_executable(script_type)
-        mock_run_command.assert_called_once_with(["chmod", "+x", f"{script_type.script_directory}/*.sh"])
+        mock_run_command.assert_called_once_with(
+            [
+                "chmod",
+                "+x",
+                *[
+                    str(script_type.script_directory / s)
+                    for s in list_directory_command(str(script_type.script_directory))
+                ],
+            ]
+        )
