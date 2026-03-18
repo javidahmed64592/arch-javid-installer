@@ -99,4 +99,5 @@ def get_disks_json() -> str:
 # Installation methods
 def make_scripts_executable(script_type: ScriptType) -> None:
     """Make all scripts of the given type executable."""
-    run_command(["chmod", "+x", f"{script_type.script_directory}/*.sh"])
+    scripts = list_directory_command(str(script_type.script_directory))
+    run_command(["chmod", "+x", *[str(script_type.script_directory / s) for s in scripts]])
