@@ -46,16 +46,6 @@ LIST_BLOCKS_COMMAND = "lsblk -J -o NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"
 
 
 # General methods
-def list_directory_command(directory: str) -> list[str]:
-    """Return a command to list the contents of a directory."""
-    return ["ls", directory]
-
-
-def read_file_command(filepath: str) -> list[str]:
-    """Return a command to read the contents of a file."""
-    return ["cat", filepath]
-
-
 def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
     try:
@@ -73,6 +63,16 @@ def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> s
     """Run a script of the given type and name."""
     script_path = script_type.get_script_path(script_name)
     return run_command([*script_type.command_prefix, script_path, *flags])
+
+
+def list_directory_command(directory: str) -> list[str]:
+    """Return a command to list the contents of a directory."""
+    return ["ls", directory]
+
+
+def read_file_command(filepath: str) -> list[str]:
+    """Return a command to read the contents of a file."""
+    return ["cat", filepath]
 
 
 # Pre-installation methods

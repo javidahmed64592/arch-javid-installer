@@ -34,18 +34,6 @@ def mock_run_command() -> Generator[MagicMock]:
 class TestGeneralMethods:
     """Tests for the general shell command methods."""
 
-    def test_list_directory_command(self) -> None:
-        """Test that the list_directory_command returns the correct command."""
-        directory = "/some/directory"
-        expected_command = ["ls", directory]
-        assert list_directory_command(directory) == expected_command
-
-    def test_read_file_command(self) -> None:
-        """Test that the read_file_command returns the correct command."""
-        filepath = "/some/file.txt"
-        expected_command = ["cat", filepath]
-        assert read_file_command(filepath) == expected_command
-
     def test_run_command(self) -> None:
         """Test that run_command calls subprocess.run with the correct arguments."""
         command = ["echo", "Hello, World!"]
@@ -72,6 +60,18 @@ class TestGeneralMethods:
 
         mock_run_command.assert_called_once_with([*expected_prefix, script_type.get_script_path(script_name), *flags])
         assert result == mock_run_command.return_value
+
+    def test_list_directory_command(self) -> None:
+        """Test that the list_directory_command returns the correct command."""
+        directory = "/some/directory"
+        expected_command = ["ls", directory]
+        assert list_directory_command(directory) == expected_command
+
+    def test_read_file_command(self) -> None:
+        """Test that the read_file_command returns the correct command."""
+        filepath = "/some/file.txt"
+        expected_command = ["cat", filepath]
+        assert read_file_command(filepath) == expected_command
 
 
 class TestPreInstallationMethods:
