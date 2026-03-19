@@ -59,9 +59,11 @@ class InstallerEngine(QObject):
         self.log_message.emit("Making scripts executable...")
         for script_type in ScriptType:
             make_scripts_executable(script_type)
+        self.log_message.emit("All scripts are now executable.")
 
     def run_system_scripts(self) -> None:
         """Run all system scripts in the correct order."""
+        self.log_message.emit("Running system scripts...")
         script_type = ScriptType.SYSTEM
         scripts = SCRIPTS[script_type]
 
@@ -78,6 +80,7 @@ class InstallerEngine(QObject):
                 f"--efi-size {self.EFI_SIZE_MB}",
             ],
         )
+        self.log_message.emit("Disk partitioned successfully.")
 
         self._update_progress("Creating filesystems...")
         run_script(
@@ -88,6 +91,7 @@ class InstallerEngine(QObject):
                 f"--root-part {_root_part}",
             ],
         )
+        self.log_message.emit("Filesystems created successfully.")
 
         self._update_progress("Mounting partitions...")
         run_script(
@@ -98,6 +102,7 @@ class InstallerEngine(QObject):
                 f"--root-part {_root_part}",
             ],
         )
+        self.log_message.emit("Partitions mounted successfully.")
 
         self._update_progress("Installing base system packages...")
         run_script(
@@ -108,9 +113,11 @@ class InstallerEngine(QObject):
                 f"--packages {self.PACKAGES_FILEPATH}",
             ],
         )
+        self.log_message.emit("Base system packages installed successfully.")
 
         self._update_progress("Generating fstab...")
         run_script(script_type=script_type, script_name=scripts["fstab"], flags=[])
+        self.log_message.emit("fstab generated successfully.")
 
         self._update_progress("Preparing chroot environment...")
         run_script(
@@ -120,9 +127,11 @@ class InstallerEngine(QObject):
                 f"--script-directory {ScriptType.CHROOT.script_directory}",
             ],
         )
+        self.log_message.emit("Chroot environment prepared successfully.")
 
     def run_chroot_scripts(self) -> None:
         """Run all chroot scripts in the correct order."""
+        self.log_message.emit("Running system scripts...")
         script_type = ScriptType.CHROOT
         scripts = SCRIPTS[script_type]
 
@@ -136,6 +145,7 @@ class InstallerEngine(QObject):
                 f"--zone {self.config.location.zone}",
             ],
         )
+        self.log_message.emit("Locale and timezone configured successfully.")
 
         self._update_progress("Configuring keyboard layout...")
         run_script(
@@ -147,6 +157,7 @@ class InstallerEngine(QObject):
                 f"--variant {self.config.keyboard.variant.variant}",
             ],
         )
+        self.log_message.emit("Keyboard layout configured successfully.")
 
         self._update_progress("Creating user accounts...")
         run_script(
@@ -159,15 +170,19 @@ class InstallerEngine(QObject):
                 f"--root_password {self.config.user.root_password}",
             ],
         )
+        self.log_message.emit("User accounts created successfully.")
 
         self._update_progress("Enabling system services...")
         run_script(script_type=script_type, script_name=scripts["services"], flags=[])
+        self.log_message.emit("System services enabled successfully.")
 
         self._update_progress("Installing NVIDIA drivers...")
         run_script(script_type=script_type, script_name=scripts["nvidia"], flags=[])
+        self.log_message.emit("NVIDIA drivers installed successfully.")
 
         self._update_progress("Installing bootloader...")
         run_script(script_type=script_type, script_name=scripts["bootloader"], flags=[])
+        self.log_message.emit("Bootloader installed successfully.")
 
     def run(self) -> None:
         """Run the installer engine."""
@@ -181,6 +196,7 @@ class InstallerEngine(QObject):
 
             self._update_progress("Unmounting partitions...")
             run_script(script_type=ScriptType.SYSTEM, script_name=SCRIPTS[ScriptType.SYSTEM]["unmount"], flags=[])
+            self.log_message.emit("Partitions unmounted successfully.")
 
             self.log_message.emit("Installation completed successfully!")
             self.progress_updated.emit(100)

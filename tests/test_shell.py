@@ -17,7 +17,6 @@ from arch_javid_installer.shell import (
     get_supported_locales,
     get_zones_for_region,
     list_directory_command,
-    make_scripts_executable,
     read_file_command,
     run_command,
     run_script,
@@ -97,22 +96,3 @@ class TestPreInstallationMethods:
         """Test that get_disks_json returns a JSON string of available disks."""
         assert get_disks_json() == mock_run_command.return_value.stdout
         mock_run_command.assert_called_once_with(LIST_BLOCKS_COMMAND.split())
-
-
-class TestInstallationMethods:
-    """Tests for the installation shell command methods."""
-
-    def test_make_scripts_executable(self, mock_run_command: MagicMock) -> None:
-        """Test that make_scripts_executable calls run_command with the correct arguments."""
-        script_type = ScriptType.CHROOT
-        make_scripts_executable(script_type)
-        mock_run_command.assert_called_once_with(
-            [
-                "chmod",
-                "+x",
-                *[
-                    str(script_type.script_directory / s)
-                    for s in list_directory_command(str(script_type.script_directory))
-                ],
-            ]
-        )

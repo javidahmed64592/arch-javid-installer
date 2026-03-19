@@ -75,26 +75,32 @@ def read_file_command(filepath: str) -> list[str]:
     return ["cat", filepath]
 
 
+def list_directory(directory: str) -> list[str]:
+    """List the contents of a directory."""
+    result = run_command(list_directory_command(directory))
+    return result.stdout.splitlines()
+
+
+def read_file(filepath: str) -> str:
+    """Read the contents of a file."""
+    result = run_command(read_file_command(filepath))
+    return result.stdout
+
+
 # Pre-installation methods
 def get_supported_locales() -> list[str]:
     """Get a list of supported locales from the system."""
-    result = run_command(read_file_command(SUPPORTED_LOCALES_FILEPATH))
-    locales: list[str] = result.stdout.splitlines()
-    return locales
+    return read_file(SUPPORTED_LOCALES_FILEPATH).splitlines()
 
 
 def get_zones_for_region(region: RegionOptions) -> list[str]:
     """Get a list of timezones for a given region."""
-    result = run_command(list_directory_command(f"{ZONEINFO_DIRECTORY}/{region}"))
-    zones: list[str] = result.stdout.splitlines()
-    return zones
+    return list_directory(f"{ZONEINFO_DIRECTORY}/{region}")
 
 
 def get_available_keyboard_layouts() -> list[str]:
     """Get a list of keyboard models, layouts, and variants."""
-    result = run_command(read_file_command(KEYBOARD_LAYOUTS_FILEPATH))
-    lines: list[str] = result.stdout.splitlines()
-    return lines
+    return read_file(KEYBOARD_LAYOUTS_FILEPATH).splitlines()
 
 
 def get_disks_json() -> str:
@@ -107,5 +113,5 @@ def get_disks_json() -> str:
 # Installation methods
 def make_scripts_executable(script_type: ScriptType) -> None:
     """Make all scripts of the given type executable."""
-    scripts = list_directory_command(str(script_type.script_directory))
+    scripts = list_directory(str(script_type.script_directory))
     run_command(["chmod", "+x", *[str(script_type.script_directory / s) for s in scripts]])
