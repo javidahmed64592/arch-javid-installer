@@ -65,20 +65,9 @@ def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> s
     return run_command([*script_type.command_prefix, script_path, *flags])
 
 
-def list_directory_command(directory: str) -> list[str]:
-    """Return a command to list the contents of a directory."""
-    return ["ls", directory]
-
-
 def read_file_command(filepath: str) -> list[str]:
     """Return a command to read the contents of a file."""
     return ["cat", filepath]
-
-
-def list_directory(directory: str) -> list[str]:
-    """List the contents of a directory."""
-    result = run_command(list_directory_command(directory))
-    return result.stdout.splitlines()
 
 
 def read_file(filepath: str) -> str:
@@ -95,7 +84,8 @@ def get_supported_locales() -> list[str]:
 
 def get_zones_for_region(region: RegionOptions) -> list[str]:
     """Get a list of timezones for a given region."""
-    return list_directory(f"{ZONEINFO_DIRECTORY}/{region}")
+    region_path = Path(ZONEINFO_DIRECTORY) / str(region)
+    return [entry.name for entry in region_path.iterdir() if entry.is_file() or entry.is_dir()]
 
 
 def get_available_keyboard_layouts() -> list[str]:
@@ -113,5 +103,7 @@ def get_disks_json() -> str:
 # Installation methods
 def make_scripts_executable(script_type: ScriptType) -> None:
     """Make all scripts of the given type executable."""
-    scripts = list_directory(str(script_type.script_directory))
-    run_command(["chmod", "+x", *[str(script_type.script_directory / s) for s in scripts]])
+    script_files = [str(f) for f in script_type.script_directory.iterdir() if f.is_file()]
+
+    if script_files:
+        run_command(["chmod", "+x", *script_files])
