@@ -7,8 +7,14 @@ from site import getsitepackages
 
 from arch_javid_installer.models import RegionOptions
 
-# Constants
+# Resource filepaths and command templates
 SCRIPTS_DIRECTORY = Path(getsitepackages()[0]) / "scripts"
+
+SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
+KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
+ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
+
+LIST_BLOCKS_COMMAND = "lsblk -J -o NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"
 
 
 class ScriptType(StrEnum):
@@ -36,15 +42,6 @@ class ScriptType(StrEnum):
         return str(self.script_directory / script_name)
 
 
-# Resource filepaths and command templates
-SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
-KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
-
-ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
-
-LIST_BLOCKS_COMMAND = "lsblk -J -o NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"
-
-
 # General methods
 def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
@@ -65,21 +62,10 @@ def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> s
     return run_command([*script_type.command_prefix, script_path, *flags])
 
 
-def read_file_command(filepath: str) -> list[str]:
-    """Return a command to read the contents of a file."""
-    return ["cat", filepath]
-
-
-def read_file(filepath: str) -> str:
-    """Read the contents of a file."""
-    result = run_command(read_file_command(filepath))
-    return result.stdout
-
-
 # Pre-installation methods
 def get_supported_locales() -> list[str]:
     """Get a list of supported locales from the system."""
-    return read_file(SUPPORTED_LOCALES_FILEPATH).splitlines()
+    return Path(SUPPORTED_LOCALES_FILEPATH).read_text().splitlines()
 
 
 def get_zones_for_region(region: RegionOptions) -> list[str]:
@@ -90,7 +76,7 @@ def get_zones_for_region(region: RegionOptions) -> list[str]:
 
 def get_available_keyboard_layouts() -> list[str]:
     """Get a list of keyboard models, layouts, and variants."""
-    return read_file(KEYBOARD_LAYOUTS_FILEPATH).splitlines()
+    return Path(KEYBOARD_LAYOUTS_FILEPATH).read_text().splitlines()
 
 
 def get_disks_json() -> str:
