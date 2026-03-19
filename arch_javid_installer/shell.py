@@ -104,6 +104,4 @@ def get_disks_json() -> str:
 def make_scripts_executable(script_type: ScriptType) -> None:
     """Make all scripts of the given type executable."""
     script_files = [str(f) for f in script_type.script_directory.iterdir() if f.is_file()]
-
-    if script_files:
-        run_command(["chmod", "+x", *script_files])
+    run_command(["chmod", "+x", *script_files])

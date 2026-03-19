@@ -90,7 +90,7 @@ class TestPreInstallationMethods:
             mock_iterdir.return_value = [mock_entry1, mock_entry2]
 
             result = get_zones_for_region(region)
-            assert result == ["London", "Paris"]
+            assert result == [mock_entry1.name, mock_entry2.name]
 
     def test_get_available_keyboard_layouts(self, mock_run_command: MagicMock) -> None:
         """Test that get_available_keyboard_layouts returns a list of keyboard layouts."""
