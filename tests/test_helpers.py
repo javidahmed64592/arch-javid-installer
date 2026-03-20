@@ -183,15 +183,26 @@ class TestDiskHelpers:
                 fstype="ext4",
                 mountpoint="/home/mockdisk2",
             ),
+            BlockDevice(
+                name="loop0",
+                size="1.8G",
+                model=None,
+                label=None,
+                fstype="squashfs",
+                mountpoint="/run/archiso/airootfs",
+            ),
         ]
         mock_disk_info = DiskInfo(blockdevices=mock_blockdevices)
         return mock_disk_info.model_dump_json()
 
     def test_parse_disk_options(self, mock_disks_json: str) -> None:
         """Test the parse_disk_options function."""
+        disks = DiskInfo.model_validate_json(mock_disks_json)
+
         disk_info = parse_disk_options(mock_disks_json)
         assert isinstance(disk_info, DiskInfo)
-        assert disk_info == DiskInfo.model_validate_json(mock_disks_json)
+        assert len(disk_info.blockdevices) == len(disks.blockdevices) - 1
+        assert not any(disk.name == "loop0" for disk in disk_info.blockdevices)
 
     def test_get_disk_options(self, mock_disks_json: str) -> None:
         """Test the get_disk_options function."""

@@ -141,7 +141,13 @@ def get_keyboard_options() -> tuple[list[KeyboardModelName], dict[KeyboardLayout
 
 def parse_disk_options(disks_json: str) -> DiskInfo:
     """Get a list of available disks and their partitions."""
-    return DiskInfo(**json.loads(disks_json))
+    disks = DiskInfo(**json.loads(disks_json))
+
+    disks_to_ignore = ["rom", "loop", "loop0", "airootfs", "rpmb", "boot0", "boot1", "sr0"]
+    disks.blockdevices = [
+        disk for disk in disks.blockdevices if not any(disk.name.endswith(prefix) for prefix in disks_to_ignore)
+    ]
+    return disks
 
 
 def get_disk_options() -> DiskInfo:
