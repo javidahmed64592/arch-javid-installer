@@ -29,7 +29,7 @@ echo "Args: --model $MODEL --layout $LAYOUT --variant $VARIANT"
 # Set keyboard layout
 echo "Setting keyboard layout..."
 
-args="${MODEL} ${LAYOUT}"
+args="${LAYOUT} ${MODEL}"
 if [[ "$VARIANT" != "default" ]]; then
   args+=" ${VARIANT}"
 fi
