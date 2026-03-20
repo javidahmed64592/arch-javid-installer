@@ -3,7 +3,7 @@
 from PySide6.QtCore import QObject, Signal
 
 from arch_javid_installer.models import InstallationConfig
-from arch_javid_installer.shell import ScriptType, make_scripts_executable, run_script
+from arch_javid_installer.shell import ScriptType, run_script
 
 SCRIPTS = {
     ScriptType.CHROOT: {
@@ -53,13 +53,6 @@ class InstallerEngine(QObject):
         progress = int((self.current_step / self.TOTAL_STEPS) * 100)
         self.progress_updated.emit(progress)
         self.log_message.emit(message)
-
-    def make_scripts_executable(self) -> None:
-        """Make all scripts executable."""
-        self.log_message.emit("Making scripts executable...")
-        for script_type in ScriptType:
-            make_scripts_executable(script_type)
-        self.log_message.emit("All scripts are now executable.")
 
     def run_system_scripts(self) -> None:
         """Run all system scripts in the correct order."""
@@ -190,7 +183,6 @@ class InstallerEngine(QObject):
             self.current_step = 0
             self.log_message.emit("Starting installation...")
 
-            self.make_scripts_executable()
             self.run_system_scripts()
             self.run_chroot_scripts()
 
