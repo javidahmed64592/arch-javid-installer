@@ -50,11 +50,10 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
     try:
         completed_process = subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
-        logger.info(completed_process.stdout)
+        if (stdout := completed_process.stdout) and stdout.strip():
+            logger.info(stdout)
     except subprocess.CalledProcessError as e:
         error_msg = f"Command failed with exit code {e.returncode}\n"
-        if e.stdout:
-            error_msg += f"STDOUT:\n{e.stdout}\n"
         if e.stderr:
             error_msg += f"STDERR:\n{e.stderr}"
         raise RuntimeError(error_msg) from e
