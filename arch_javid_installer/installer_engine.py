@@ -200,8 +200,8 @@ class InstallerEngine(QObject):
     def run(self) -> None:
         """Run the installer engine."""
         try:
+            self.log_message.emit("Starting installation...")
             self.current_step = 0
-            self.log_message.emit(f"Starting installation with configuration:\n{self.config.model_dump_json(indent=2)}")
 
             self.run_system_scripts()
             self.run_chroot_scripts()
