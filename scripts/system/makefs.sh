@@ -26,7 +26,7 @@ echo "Args: --efi-part $EFI_PART --root-part $ROOT_PART"
 
 # Make filesystems
 echo "Creating FAT32 filesystem on EFI partition..."
-mkfs.fat -F32 $EFI_PART
+mkfs.fat -F32 "/dev/$EFI_PART"
 
 echo "Creating Btrfs filesystem on root partition..."
-mkfs.btrfs $ROOT_PART
+mkfs.btrfs "/dev/$ROOT_PART"

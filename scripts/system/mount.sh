@@ -26,8 +26,8 @@ echo "Args: --efi-part $EFI_PART --root-part $ROOT_PART"
 
 # Mount partitions
 echo "Mounting root partition..."
-mount $ROOT_PART /mnt
+mount "/dev/$ROOT_PART" /mnt
 
 echo "Mounting EFI partition..."
 mkdir /mnt/boot
-mount $EFI_PART /mnt/boot
+mount "/dev/$EFI_PART" /mnt/boot
