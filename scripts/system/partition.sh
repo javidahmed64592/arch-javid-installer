@@ -35,13 +35,13 @@ echo "Root partition: ${DISK}2, ${ROOT_START}MiB - ${ROOT_END}"
 
 # Create GPT partition table and partitions
 echo "Creating GPT partition table..."
-parted $DISK --script mklabel gpt
+parted /dev/$DISK --script mklabel gpt
 
 # EFI system partition
 echo "Creating EFI system partition..."
-parted $DISK --script mkpart primary fat32 ${EFI_START}MiB ${EFI_END}MiB
-parted $DISK --script set 1 esp on
+parted /dev/$DISK --script mkpart primary fat32 ${EFI_START}MiB ${EFI_END}MiB
+parted /dev/$DISK --script set 1 esp on
 
 # Root partition
 echo "Creating root partition..."
-parted $DISK --script mkpart primary btrfs ${ROOT_START}MiB ${ROOT_END}
+parted /dev/$DISK --script mkpart primary btrfs ${ROOT_START}MiB ${ROOT_END}
