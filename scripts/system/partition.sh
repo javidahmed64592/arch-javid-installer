@@ -35,7 +35,7 @@ echo "Root partition: ${DISK}2, ${ROOT_START}MiB - ${ROOT_END}"
 
 # Create GPT partition table and partitions
 echo "Creating GPT partition table..."
-parted $DISK --script mklabel gpt --force
+parted $DISK --script mklabel gpt
 
 # EFI system partition
 echo "Creating EFI system partition..."
