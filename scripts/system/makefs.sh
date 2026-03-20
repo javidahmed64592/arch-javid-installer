@@ -29,4 +29,4 @@ echo "Creating FAT32 filesystem on EFI partition..."
 mkfs.fat -F32 "/dev/$EFI_PART"
 
 echo "Creating Btrfs filesystem on root partition..."
-mkfs.btrfs "/dev/$ROOT_PART"
+mkfs.btrfs "/dev/$ROOT_PART" -f
