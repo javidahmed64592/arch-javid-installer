@@ -51,7 +51,7 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
     try:
         completed_process = subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
         if (stdout := completed_process.stdout) and stdout.strip():
-            logger.info(stdout)
+            logger.info("STDOUT:\n%s", stdout)
     except subprocess.CalledProcessError as e:
         error_msg = f"Command failed with exit code {e.returncode}\n"
         if e.stderr:
@@ -63,6 +63,7 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
 
 def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> subprocess.CompletedProcess:
     """Run a script of the given type and name."""
+    logger.info("Running script: %s", script_name)
     script_path = script_type.get_script_path(script_name)
     return run_command([*script_type.command_prefix, script_path, *flags])
 
@@ -86,6 +87,7 @@ def get_available_keyboard_layouts() -> list[str]:
 
 def get_disks_json() -> str:
     """Get a JSON string of available disks and their partitions."""
+    logger.info("Listing available disks with: %s", " ".join(LIST_BLOCKS_COMMAND.split()))
     result = run_command(LIST_BLOCKS_COMMAND.split())
     disks: str = result.stdout
     return disks
