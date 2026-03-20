@@ -133,7 +133,7 @@ class InstallerEngine(QObject):
 
     def run_chroot_scripts(self) -> None:
         """Run all chroot scripts in the correct order."""
-        self.log_message.emit("Running system scripts...")
+        self.log_message.emit("Running chroot scripts...")
         script_type = ScriptType.CHROOT
         scripts = SCRIPTS[script_type]
 
