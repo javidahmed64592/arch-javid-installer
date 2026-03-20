@@ -153,18 +153,11 @@ class InstallerEngine(QObject):
         self.log_message.emit("Locale and timezone configured successfully.")
 
         self._update_progress("Configuring keyboard layout...")
-        run_script(
-            script_type=script_type,
-            script_name=scripts["keyboard"],
-            flags=[
-                "--model",
-                self.config.keyboard.model.model,
-                "--layout",
-                self.config.keyboard.layout.layout,
-                "--variant",
-                self.config.keyboard.variant.variant,
-            ],
-        )
+        _keyboard_flags = ["--model", self.config.keyboard.model.model, "--layout", self.config.keyboard.layout.layout]
+        if (variant := self.config.keyboard.variant.variant) != "default":
+            _keyboard_flags.extend(["--variant", variant])
+
+        run_script(script_type=script_type, script_name=scripts["keyboard"], flags=_keyboard_flags)
         self.log_message.emit("Keyboard layout configured successfully.")
 
         self._update_progress("Creating user accounts...")
