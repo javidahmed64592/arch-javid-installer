@@ -69,8 +69,10 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["partition"],
             flags=[
-                f"--disk {_disk}",
-                f"--efi-size {self.EFI_SIZE_MB}",
+                "--disk",
+                _disk,
+                "--efi-size",
+                str(self.EFI_SIZE_MB),
             ],
         )
         self.log_message.emit("Disk partitioned successfully.")
@@ -80,8 +82,10 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["makefs"],
             flags=[
-                f"--efi-part {_efi_part}",
-                f"--root-part {_root_part}",
+                "--efi-part",
+                _efi_part,
+                "--root-part",
+                _root_part,
             ],
         )
         self.log_message.emit("Filesystems created successfully.")
@@ -91,8 +95,10 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["mount"],
             flags=[
-                f"--efi-part {_efi_part}",
-                f"--root-part {_root_part}",
+                "--efi-part",
+                _efi_part,
+                "--root-part",
+                _root_part,
             ],
         )
         self.log_message.emit("Partitions mounted successfully.")
@@ -102,8 +108,10 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["base"],
             flags=[
-                f"--pacman-conf {self.PACMAN_CONF_FILEPATH}",
-                f"--packages {self.PACKAGES_FILEPATH}",
+                "--pacman-conf",
+                self.PACMAN_CONF_FILEPATH,
+                "--packages",
+                self.PACKAGES_FILEPATH,
             ],
         )
         self.log_message.emit("Base system packages installed successfully.")
@@ -117,7 +125,8 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["chroot"],
             flags=[
-                f"--script-directory {ScriptType.CHROOT.script_directory}",
+                "--script-directory",
+                str(ScriptType.CHROOT.script_directory),
             ],
         )
         self.log_message.emit("Chroot environment prepared successfully.")
@@ -133,9 +142,12 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["locale"],
             flags=[
-                f"--locale {self.config.language.locale.code}",
-                f"--region {self.config.location.region}",
-                f"--zone {self.config.location.zone}",
+                "--locale",
+                self.config.language.locale.code,
+                "--region",
+                self.config.location.region,
+                "--zone",
+                self.config.location.zone,
             ],
         )
         self.log_message.emit("Locale and timezone configured successfully.")
@@ -145,9 +157,12 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["keyboard"],
             flags=[
-                f"--model {self.config.keyboard.model.model}",
-                f"--layout {self.config.keyboard.layout.layout}",
-                f"--variant {self.config.keyboard.variant.variant}",
+                "--model",
+                self.config.keyboard.model.model,
+                "--layout",
+                self.config.keyboard.layout.layout,
+                "--variant",
+                self.config.keyboard.variant.variant,
             ],
         )
         self.log_message.emit("Keyboard layout configured successfully.")
@@ -157,10 +172,14 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["users"],
             flags=[
-                f"--hostname {self.config.user.hostname}",
-                f"--username {self.config.user.username}",
-                f"--password {self.config.user.password}",
-                f"--root_password {self.config.user.root_password}",
+                "--hostname",
+                self.config.user.hostname,
+                "--username",
+                self.config.user.username,
+                "--password",
+                self.config.user.password,
+                "--root_password",
+                self.config.user.root_password,
             ],
         )
         self.log_message.emit("User accounts created successfully.")
