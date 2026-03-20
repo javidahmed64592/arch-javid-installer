@@ -1,11 +1,14 @@
 """Shell commands for the installer to use."""
 
+import logging
 import subprocess
 from enum import StrEnum
 from pathlib import Path
 from site import getsitepackages
 
 from arch_javid_installer.models import RegionOptions
+
+logger = logging.getLogger(__name__)
 
 # Resource filepaths and command templates
 SCRIPTS_DIRECTORY = Path(getsitepackages()[0]) / "scripts"
@@ -46,7 +49,8 @@ class ScriptType(StrEnum):
 def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
     try:
-        return subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+        completed_process = subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+        logger.info(completed_process.stdout)
     except subprocess.CalledProcessError as e:
         error_msg = f"Command failed with exit code {e.returncode}\n"
         if e.stdout:
@@ -54,6 +58,8 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
         if e.stderr:
             error_msg += f"STDERR:\n{e.stderr}"
         raise RuntimeError(error_msg) from e
+    else:
+        return completed_process
 
 
 def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> subprocess.CompletedProcess:
