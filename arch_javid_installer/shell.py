@@ -54,7 +54,9 @@ def run_command(command: list[str]) -> subprocess.CompletedProcess:
             logger.info(stdout)
     except subprocess.CalledProcessError as e:
         error_msg = f"Command failed with exit code {e.returncode}\n"
-        if stderr := e.stderr:
+        if (stdout := e.stdout) and stdout.strip():
+            logger.info(stdout)
+        if (stderr := e.stderr) and stderr.strip():
             logger.exception(stderr)
             error_msg += stderr
         raise RuntimeError(error_msg) from e
