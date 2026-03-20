@@ -31,6 +31,6 @@ echo "Setting keyboard layout..."
 
 args="${MODEL} ${LAYOUT}"
 if [[ "$VARIANT" != "default" ]]; then
-  args+=" --variant ${VARIANT}"
+  args+=" ${VARIANT}"
 fi
 localectl set-x11-keymap ${args}
