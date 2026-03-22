@@ -137,6 +137,9 @@ class InstallerEngine(QObject):
         script_type = ScriptType.CHROOT
         scripts = SCRIPTS[script_type]
 
+        _disk = self.config.disk.disk_to_use.name
+        _root_part = f"{_disk}2"
+
         self._update_progress("Configuring locale and timezone...")
         run_script(
             script_type=script_type,
@@ -194,7 +197,14 @@ class InstallerEngine(QObject):
         self.log_message.emit("NVIDIA drivers installed successfully.")
 
         self._update_progress("Installing bootloader...")
-        run_script(script_type=script_type, script_name=scripts["bootloader"], flags=[])
+        run_script(
+            script_type=script_type,
+            script_name=scripts["bootloader"],
+            flags=[
+                "--root-part",
+                _root_part,
+            ],
+        )
         self.log_message.emit("Bootloader installed successfully.")
 
     def run(self) -> None:
