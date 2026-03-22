@@ -29,6 +29,10 @@ echo "Args: --model $MODEL --layout $LAYOUT --variant $VARIANT"
 # Set keyboard layout
 echo "Setting keyboard layout..."
 
+# Set console keyboard layout
+echo "KEYMAP=${LAYOUT}" > /etc/vconsole.conf
+
+# Set X11 keyboard layout
 args="${LAYOUT} ${MODEL}"
 if [[ "$VARIANT" != "default" ]]; then
   args+=" ${VARIANT}"
