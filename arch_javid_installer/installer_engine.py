@@ -179,7 +179,7 @@ class InstallerEngine(QObject):
                 self.config.user.username,
                 "--password",
                 self.config.user.password,
-                "--root_password",
+                "--root-password",
                 self.config.user.root_password,
             ],
         )
