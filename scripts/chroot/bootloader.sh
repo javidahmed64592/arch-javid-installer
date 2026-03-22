@@ -20,14 +20,14 @@ fi
 
 # Script
 echo "Running script: $0"
-echo "Args: --root-part $ROOT_PART"
+echo "Args: --root-part ${ROOT_PART}"
 
 # Create bootloader entry
 echo "Creating bootloader entry for root partition..."
 mkdir -p /boot/loader/entries
 
-ROOT_UUID=$(blkid -s UUID -o value ${ROOT_PART})
-echo "Root partition UUID: $ROOT_UUID"
+ROOT_UUID=$(blkid -s UUID -o value "/dev/${ROOT_PART}")
+echo "Root partition UUID: ${ROOT_UUID}"
 cat <<EOL > /boot/loader/entries/arch.conf
 title   Arch Javid
 linux   /vmlinuz-linux
