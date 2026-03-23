@@ -1,5 +1,6 @@
 """Shell commands for the installer to use."""
 
+import logging
 import subprocess
 from enum import StrEnum
 from pathlib import Path
@@ -7,8 +8,16 @@ from site import getsitepackages
 
 from arch_javid_installer.models import RegionOptions
 
-# Constants
+logger = logging.getLogger(__name__)
+
+# Resource filepaths and command templates
 SCRIPTS_DIRECTORY = Path(getsitepackages()[0]) / "scripts"
+
+SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
+KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
+ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
+
+LIST_BLOCKS_COMMAND = "lsblk -J -o NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"
 
 
 class ScriptType(StrEnum):
@@ -36,41 +45,28 @@ class ScriptType(StrEnum):
         return str(self.script_directory / script_name)
 
 
-# Resource filepaths and command templates
-SUPPORTED_LOCALES_FILEPATH = "/usr/share/i18n/SUPPORTED"
-KEYBOARD_LAYOUTS_FILEPATH = "/usr/share/X11/xkb/rules/base.lst"
-
-ZONEINFO_DIRECTORY = "/usr/share/zoneinfo"
-
-LIST_BLOCKS_COMMAND = "lsblk -J -o NAME,SIZE,MODEL,LABEL,FSTYPE,MOUNTPOINT"
-
-
 # General methods
-def list_directory_command(directory: str) -> list[str]:
-    """Return a command to list the contents of a directory."""
-    return ["ls", directory]
-
-
-def read_file_command(filepath: str) -> list[str]:
-    """Return a command to read the contents of a file."""
-    return ["cat", filepath]
-
-
 def run_command(command: list[str]) -> subprocess.CompletedProcess:
     """Run a command in the shell."""
     try:
-        return subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+        completed_process = subprocess.run(command, check=True, capture_output=True, text=True)  # noqa: S603
+        if (stdout := completed_process.stdout) and stdout.strip():
+            logger.info(stdout)
     except subprocess.CalledProcessError as e:
         error_msg = f"Command failed with exit code {e.returncode}\n"
-        if e.stdout:
-            error_msg += f"STDOUT:\n{e.stdout}\n"
-        if e.stderr:
-            error_msg += f"STDERR:\n{e.stderr}"
+        if (stdout := e.stdout) and stdout.strip():
+            logger.info(stdout)
+        if (stderr := e.stderr) and stderr.strip():
+            logger.exception(stderr)
+            error_msg += stderr
         raise RuntimeError(error_msg) from e
+    else:
+        return completed_process
 
 
 def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> subprocess.CompletedProcess:
     """Run a script of the given type and name."""
+    logger.info("Running script: %s", script_name)
     script_path = script_type.get_script_path(script_name)
     return run_command([*script_type.command_prefix, script_path, *flags])
 
@@ -78,34 +74,23 @@ def run_script(script_type: ScriptType, script_name: str, flags: list[str]) -> s
 # Pre-installation methods
 def get_supported_locales() -> list[str]:
     """Get a list of supported locales from the system."""
-    result = run_command(read_file_command(SUPPORTED_LOCALES_FILEPATH))
-    locales: list[str] = result.stdout.splitlines()
-    return locales
+    return Path(SUPPORTED_LOCALES_FILEPATH).read_text().splitlines()
 
 
 def get_zones_for_region(region: RegionOptions) -> list[str]:
     """Get a list of timezones for a given region."""
-    result = run_command(list_directory_command(f"{ZONEINFO_DIRECTORY}/{region}"))
-    zones: list[str] = result.stdout.splitlines()
-    return zones
+    region_path = Path(ZONEINFO_DIRECTORY) / str(region)
+    return [entry.name for entry in region_path.iterdir() if entry.is_file() or entry.is_dir()]
 
 
 def get_available_keyboard_layouts() -> list[str]:
     """Get a list of keyboard models, layouts, and variants."""
-    result = run_command(read_file_command(KEYBOARD_LAYOUTS_FILEPATH))
-    lines: list[str] = result.stdout.splitlines()
-    return lines
+    return Path(KEYBOARD_LAYOUTS_FILEPATH).read_text().splitlines()
 
 
 def get_disks_json() -> str:
     """Get a JSON string of available disks and their partitions."""
+    logger.info("Listing available disks with: %s", " ".join(LIST_BLOCKS_COMMAND.split()))
     result = run_command(LIST_BLOCKS_COMMAND.split())
     disks: str = result.stdout
     return disks
-
-
-# Installation methods
-def make_scripts_executable(script_type: ScriptType) -> None:
-    """Make all scripts of the given type executable."""
-    scripts = list_directory_command(str(script_type.script_directory))
-    run_command(["chmod", "+x", *[str(script_type.script_directory / s) for s in scripts]])

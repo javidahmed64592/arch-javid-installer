@@ -3,7 +3,7 @@
 from PySide6.QtCore import QObject, Signal
 
 from arch_javid_installer.models import InstallationConfig
-from arch_javid_installer.shell import ScriptType, make_scripts_executable, run_script
+from arch_javid_installer.shell import ScriptType, run_script
 
 SCRIPTS = {
     ScriptType.CHROOT: {
@@ -54,14 +54,9 @@ class InstallerEngine(QObject):
         self.progress_updated.emit(progress)
         self.log_message.emit(message)
 
-    def make_scripts_executable(self) -> None:
-        """Make all scripts executable."""
-        self.log_message.emit("Making scripts executable...")
-        for script_type in ScriptType:
-            make_scripts_executable(script_type)
-
     def run_system_scripts(self) -> None:
         """Run all system scripts in the correct order."""
+        self.log_message.emit("Running system scripts...")
         script_type = ScriptType.SYSTEM
         scripts = SCRIPTS[script_type]
 
@@ -74,113 +69,160 @@ class InstallerEngine(QObject):
             script_type=script_type,
             script_name=scripts["partition"],
             flags=[
-                f"--disk {_disk}",
-                f"--efi-size {self.EFI_SIZE_MB}",
+                "--disk",
+                _disk,
+                "--efi-part",
+                _efi_part,
+                "--root-part",
+                _root_part,
+                "--efi-size",
+                str(self.EFI_SIZE_MB),
             ],
         )
+        self.log_message.emit("Disk partitioned successfully.")
 
         self._update_progress("Creating filesystems...")
         run_script(
             script_type=script_type,
             script_name=scripts["makefs"],
             flags=[
-                f"--efi-part {_efi_part}",
-                f"--root-part {_root_part}",
+                "--efi-part",
+                _efi_part,
+                "--root-part",
+                _root_part,
             ],
         )
+        self.log_message.emit("Filesystems created successfully.")
 
         self._update_progress("Mounting partitions...")
         run_script(
             script_type=script_type,
             script_name=scripts["mount"],
             flags=[
-                f"--efi-part {_efi_part}",
-                f"--root-part {_root_part}",
+                "--efi-part",
+                _efi_part,
+                "--root-part",
+                _root_part,
             ],
         )
+        self.log_message.emit("Partitions mounted successfully.")
 
         self._update_progress("Installing base system packages...")
         run_script(
             script_type=script_type,
             script_name=scripts["base"],
             flags=[
-                f"--pacman-conf {self.PACMAN_CONF_FILEPATH}",
-                f"--packages {self.PACKAGES_FILEPATH}",
+                "--pacman-conf",
+                self.PACMAN_CONF_FILEPATH,
+                "--packages",
+                self.PACKAGES_FILEPATH,
             ],
         )
+        self.log_message.emit("Base system packages installed successfully.")
 
         self._update_progress("Generating fstab...")
         run_script(script_type=script_type, script_name=scripts["fstab"], flags=[])
+        self.log_message.emit("fstab generated successfully.")
 
         self._update_progress("Preparing chroot environment...")
         run_script(
             script_type=script_type,
             script_name=scripts["chroot"],
             flags=[
-                f"--script-directory {ScriptType.CHROOT.script_directory}",
+                "--script-directory",
+                str(ScriptType.CHROOT.script_directory),
             ],
         )
+        self.log_message.emit("Chroot environment prepared successfully.")
 
     def run_chroot_scripts(self) -> None:
         """Run all chroot scripts in the correct order."""
+        self.log_message.emit("Running chroot scripts...")
         script_type = ScriptType.CHROOT
         scripts = SCRIPTS[script_type]
+
+        _disk = self.config.disk.disk_to_use.name
+        _root_part = f"{_disk}2"
 
         self._update_progress("Configuring locale and timezone...")
         run_script(
             script_type=script_type,
             script_name=scripts["locale"],
             flags=[
-                f"--locale {self.config.language.locale.code}",
-                f"--region {self.config.location.region}",
-                f"--zone {self.config.location.zone}",
+                "--locale",
+                self.config.language.locale.code,
+                "--region",
+                self.config.location.region,
+                "--zone",
+                self.config.location.zone,
             ],
         )
+        self.log_message.emit("Locale and timezone configured successfully.")
 
         self._update_progress("Configuring keyboard layout...")
+
         run_script(
             script_type=script_type,
             script_name=scripts["keyboard"],
             flags=[
-                f"--model {self.config.keyboard.model.model}",
-                f"--layout {self.config.keyboard.layout.layout}",
-                f"--variant {self.config.keyboard.variant.variant}",
+                "--model",
+                self.config.keyboard.model.model,
+                "--layout",
+                self.config.keyboard.layout.layout,
+                "--variant",
+                self.config.keyboard.variant.variant,
             ],
         )
+        self.log_message.emit("Keyboard layout configured successfully.")
 
         self._update_progress("Creating user accounts...")
         run_script(
             script_type=script_type,
             script_name=scripts["users"],
             flags=[
-                f"--hostname {self.config.user.hostname}",
-                f"--username {self.config.user.username}",
-                f"--password {self.config.user.password}",
-                f"--root_password {self.config.user.root_password}",
+                "--hostname",
+                self.config.user.hostname,
+                "--username",
+                self.config.user.username,
+                "--password",
+                self.config.user.password,
+                "--root-password",
+                self.config.user.root_password,
             ],
         )
+        self.log_message.emit("User accounts created successfully.")
 
         self._update_progress("Enabling system services...")
         run_script(script_type=script_type, script_name=scripts["services"], flags=[])
+        self.log_message.emit("System services enabled successfully.")
 
         self._update_progress("Installing NVIDIA drivers...")
         run_script(script_type=script_type, script_name=scripts["nvidia"], flags=[])
+        self.log_message.emit("NVIDIA drivers installed successfully.")
 
         self._update_progress("Installing bootloader...")
-        run_script(script_type=script_type, script_name=scripts["bootloader"], flags=[])
+        run_script(
+            script_type=script_type,
+            script_name=scripts["bootloader"],
+            flags=[
+                "--root-part",
+                _root_part,
+            ],
+        )
+        self.log_message.emit("Bootloader installed successfully.")
 
     def run(self) -> None:
         """Run the installer engine."""
         try:
-            self.current_step = 0
             self.log_message.emit("Starting installation...")
+            self.current_step = 0
 
-            self.make_scripts_executable()
             self.run_system_scripts()
             self.run_chroot_scripts()
 
             self._update_progress("Unmounting partitions...")
             run_script(script_type=ScriptType.SYSTEM, script_name=SCRIPTS[ScriptType.SYSTEM]["unmount"], flags=[])
+            self.log_message.emit("Partitions unmounted successfully.")
 
             self.log_message.emit("Installation completed successfully!")
             self.progress_updated.emit(100)

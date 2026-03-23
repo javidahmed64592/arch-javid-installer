@@ -11,20 +11,20 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --locale) LOCALE="$2"; shift 2 ;;
     --region) REGION="$2"; shift 2 ;;
-    --zone) ZONE="$2"; shift 2 ;;
+    --zone)  ZONE="$2";    shift 2 ;;
     *) echo "Unknown argument: $1"; exit 1 ;;
   esac
 done
 
 # Validate required variables
-if [[ -z "$LOCALE" || -z "$REGION" || -z "$ZONE" ]]; then
+if [[ -z "${LOCALE}" || -z "${REGION}" || -z "${ZONE}" ]]; then
   echo "Usage: $0 --locale <locale> --region <region> --zone <zone>"
   exit 1
 fi
 
 # Script
 echo "Running script: $0"
-echo "Args: --locale $LOCALE --region $REGION --zone $ZONE"
+echo "Args: --locale ${LOCALE} --region ${REGION} --zone ${ZONE}"
 
 # Set timezone
 echo "Setting timezone..."

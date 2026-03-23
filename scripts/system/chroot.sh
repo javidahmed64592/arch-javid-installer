@@ -13,16 +13,16 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required variables
-if [[ -z "$SCRIPT_DIRECTORY" ]]; then
+if [[ -z "${SCRIPT_DIRECTORY}" ]]; then
   echo "Usage: $0 --script-directory <path to chroot scripts>"
   exit 1
 fi
 
 # Script
 echo "Running script: $0"
-echo "Args: --script-directory $SCRIPT_DIRECTORY"
+echo "Args: --script-directory ${SCRIPT_DIRECTORY}"
 
 # Copy chroot scripts to mounted root partition
 echo "Copying chroot scripts to mounted root partition..."
-mkdir -p /mnt${SCRIPT_DIRECTORY}
-cp "${SCRIPT_DIRECTORY}/"*.sh /mnt${SCRIPT_DIRECTORY}/
+mkdir -p "/mnt${SCRIPT_DIRECTORY}"
+cp "${SCRIPT_DIRECTORY}/"*.sh "/mnt${SCRIPT_DIRECTORY}/"
