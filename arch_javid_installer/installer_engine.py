@@ -71,6 +71,10 @@ class InstallerEngine(QObject):
             flags=[
                 "--disk",
                 _disk,
+                "--efi-part",
+                _efi_part,
+                "--root-part",
+                _root_part,
                 "--efi-size",
                 str(self.EFI_SIZE_MB),
             ],
