@@ -31,7 +31,7 @@ echo "Args: --disk ${DISK} --efi-part ${EFI_PART} --root-part ${ROOT_PART} --efi
 # Calculate partition start/end in MiB
 EFI_START=1
 EFI_END=$((EFI_START + EFI_SIZE))
-ROOT_START=$EFI_END
+ROOT_START=${EFI_END}
 ROOT_END=100%
 echo "Calculated partition layout:"
 echo "EFI partition:  ${EFI_PART}, ${EFI_START}MiB - ${EFI_END}MiB"

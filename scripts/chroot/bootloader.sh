@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required variables
-if [[ -z "$ROOT_PART" ]]; then
+if [[ -z "${ROOT_PART}" ]]; then
   echo "Usage: $0 --root-part <root partition>"
   exit 1
 fi
